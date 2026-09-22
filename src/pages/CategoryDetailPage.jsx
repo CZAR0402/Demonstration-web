@@ -369,6 +369,28 @@ function CategoryDetailPage() {
                         </div>
                       </div>
 
+                      {/* Associated Sub-Endpoints if present */}
+                      {feat.api.relatedEndpoints && feat.api.relatedEndpoints.length > 0 && (
+                        <div className="api-related-endpoints-wrapper" style={{ padding: '0.6rem 1rem', background: 'rgba(15, 23, 42, 0.4)', borderBottom: '1px solid rgba(255, 255, 255, 0.06)', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                          <span style={{ fontSize: '0.72rem', fontWeight: 600, color: 'var(--text-muted, #94a3b8)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                            Associated Flow Endpoints ({feat.api.relatedEndpoints.length})
+                          </span>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }}>
+                            {feat.api.relatedEndpoints.map((ep, idx) => (
+                              <div key={idx} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', padding: '0.2rem 0.55rem', borderRadius: '5px', fontSize: '0.75rem' }}>
+                                <span className={`feat-api-badge ${ep.method.toLowerCase()}`} style={{ fontSize: '0.65rem', padding: '0.1rem 0.35rem', fontWeight: 700 }}>
+                                  {ep.method}
+                                </span>
+                                <code style={{ color: '#c7d2fe', fontSize: '0.75rem', fontFamily: 'monospace' }}>{ep.endpoint}</code>
+                                {ep.description && (
+                                  <span style={{ color: '#94a3b8', fontSize: '0.7rem' }}>— {ep.description}</span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
                       {/* Code Sub-Tabs & Copy Action */}
                       <div className="api-code-tabs-bar">
                         <div className="api-tab-group">

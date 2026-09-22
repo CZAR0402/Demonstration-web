@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Phone, Mail, Calendar, CheckSquare, Plus, Clock, MessageSquare, AlertCircle, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Phone, Mail, Calendar, CheckSquare, Plus, Clock, MessageSquare, AlertCircle, ExternalLink, Send, X } from 'lucide-react';
 import { productCategories } from '../data/productFeaturesData';
 import { api } from '../services/api';
 
@@ -9,12 +9,24 @@ function LeadDetailScreen({ leadId, leads, setLeads, onBack, currentUser }) {
 
   const [activityInput, setActivityInput] = useState({ type: 'Call', content: '' });
   const [reminderInput, setReminderInput] = useState('');
+  
+  // Direct Email Modal state
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailForm, setEmailForm] = useState({ subject: '', body: '' });
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const [emailFeedback, setEmailFeedback] = useState(null);
 
-  if (!lead) {
+  const isAdmin = currentUser?.role === 'ADMIN';
+  const isUnassigned = !lead?.assignedTo || lead?.assignedToName === 'Unassigned';
+
+  if (!lead || (!isAdmin && isUnassigned)) {
     return (
       <div className="content-card" style={{ textAlign: 'center', padding: '3rem' }}>
         <AlertCircle size={48} style={{ color: 'var(--danger)', marginBottom: '1rem' }} />
-        <h2>Lead Not Found</h2>
+        <h2>{lead ? 'Access Restricted' : 'Lead Not Found'}</h2>
+        <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+          {lead ? 'Unassigned leads can only be accessed and managed by administrators.' : 'The requested lead does not exist in the database.'}
+        </p>
         <button className="btn btn-primary" onClick={onBack} style={{ marginTop: '1rem' }}>
           <ArrowLeft size={16} /> Back to Leads
         </button>
@@ -98,15 +110,65 @@ function LeadDetailScreen({ leadId, leads, setLeads, onBack, currentUser }) {
     }));
 
     try {
-      await api.addReminder(lead.id || lead._id, {
-        task: reminderInput,
-        dueDate
-      });
+      await api.addReminder(lead.id || lead._id, newReminder);
     } catch (err) {
       console.warn('Could not persist reminder to backend:', err);
     }
 
     setReminderInput('');
+  };
+
+  const handleSendDirectEmail = async (e) => {
+    e.preventDefault();
+    if (!lead.email || !emailForm.subject || !emailForm.body) return;
+
+    setIsSendingEmail(true);
+    setEmailFeedback(null);
+
+    try {
+      const res = await api.sendSingleEmail({
+        to: lead.email,
+        subject: emailForm.subject,
+        html: emailForm.body,
+        text: emailForm.body,
+        leadId: lead._id || lead.id
+      });
+
+      if (res && res.success) {
+        const authorName = currentUser?.name || 'Sales Executive';
+        const newActivity = {
+          id: `act-${Date.now()}`,
+          type: 'Email',
+          content: `Sent email via SMTP: "${emailForm.subject}"`,
+          date: new Date().toISOString().split('T')[0],
+          user: authorName
+        };
+
+        setLeads(leads.map(l => {
+          if (l.id === lead.id || l._id === lead.id) {
+            return {
+              ...l,
+              activities: [newActivity, ...(l.activities || [])]
+            };
+          }
+          return l;
+        }));
+
+        setEmailFeedback({ type: 'success', message: `Email delivered to ${lead.email}!` });
+        setTimeout(() => {
+          setShowEmailModal(false);
+          setEmailForm({ subject: '', body: '' });
+          setEmailFeedback(null);
+        }, 1200);
+      } else {
+        throw new Error(res?.message || 'Failed to send email');
+      }
+    } catch (err) {
+      console.error('Direct email error:', err);
+      setEmailFeedback({ type: 'error', message: err.message || 'Error sending email' });
+    } finally {
+      setIsSendingEmail(false);
+    }
   };
 
   const toggleReminderCompleted = (reminderId) => {
@@ -189,9 +251,22 @@ function LeadDetailScreen({ leadId, leads, setLeads, onBack, currentUser }) {
             </div>
             <div className="meta-row">
               <span className="meta-label">Email Address</span>
-              <span className="meta-val" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Mail size={14} style={{ color: 'var(--text-muted)' }} /> {lead.email}
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: '0.5rem' }}>
+                <span className="meta-val" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Mail size={14} style={{ color: 'var(--text-muted)' }} /> {lead.email || 'N/A'}
+                </span>
+                {lead.email && (
+                  <button
+                    type="button"
+                    onClick={() => setShowEmailModal(true)}
+                    className="btn btn-secondary"
+                    style={{ padding: '0.25rem 0.6rem', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+                    title="Send Email via AWS SMTP"
+                  >
+                    <Send size={11} /> Send Email
+                  </button>
+                )}
+              </div>
             </div>
             <div className="meta-row">
               <span className="meta-label">Location</span>
@@ -402,6 +477,111 @@ function LeadDetailScreen({ leadId, leads, setLeads, onBack, currentUser }) {
 
         </div>
       </div>
+
+      {/* Direct Email Compose Modal */}
+      {showEmailModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.65)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          backdropFilter: 'blur(4px)'
+        }}>
+          <div className="content-card" style={{ width: '540px', maxWidth: '92vw', padding: '1.75rem', position: 'relative' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                <Mail size={20} style={{ color: 'var(--primary)' }} />
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', margin: 0 }}>Compose Direct Email</h3>
+              </div>
+              <button 
+                type="button" 
+                onClick={() => { setShowEmailModal(false); setEmailFeedback(null); }} 
+                className="btn btn-secondary" 
+                style={{ padding: '0.35rem', borderRadius: '50%' }}
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {emailFeedback && (
+              <div style={{
+                padding: '0.65rem 1rem',
+                borderRadius: '6px',
+                marginBottom: '1rem',
+                fontSize: '0.85rem',
+                backgroundColor: emailFeedback.type === 'success' ? 'var(--success-light)' : 'var(--danger-light)',
+                color: emailFeedback.type === 'success' ? 'var(--success)' : 'var(--danger)',
+                border: `1px solid ${emailFeedback.type === 'success' ? 'var(--success)' : 'var(--danger)'}`
+              }}>
+                {emailFeedback.message}
+              </div>
+            )}
+
+            <form onSubmit={handleSendDirectEmail} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div className="form-group">
+                <label className="form-label">To (Recipient)</label>
+                <input 
+                  type="email" 
+                  className="form-input" 
+                  value={lead.email} 
+                  disabled 
+                  style={{ opacity: 0.8, cursor: 'not-allowed' }}
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Subject</label>
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  placeholder="e.g. Fivopay - Proposal for Cooperative Housing Society" 
+                  value={emailForm.subject}
+                  onChange={(e) => setEmailForm({ ...emailForm, subject: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Message Body</label>
+                <textarea 
+                  className="form-textarea" 
+                  style={{ minHeight: '130px' }}
+                  placeholder={`Hi ${lead.contactPerson || lead.name},\n\nFollowing up regarding our discussion on Fivopay payment collection automation...`}
+                  value={emailForm.body}
+                  onChange={(e) => setEmailForm({ ...emailForm, body: e.target.value })}
+                  required
+                ></textarea>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
+                <button 
+                  type="button" 
+                  className="btn btn-secondary"
+                  onClick={() => setShowEmailModal(false)}
+                  disabled={isSendingEmail}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  className="btn btn-primary"
+                  disabled={isSendingEmail}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+                >
+                  <Send size={14} className={isSendingEmail ? 'spin' : ''} />
+                  {isSendingEmail ? 'Sending via AWS SMTP...' : 'Send Email'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

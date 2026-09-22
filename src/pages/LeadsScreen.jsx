@@ -215,7 +215,16 @@ function LeadsScreen({
     }
   };
 
-  const filteredLeads = leads.filter(lead => {
+  // If user is not Admin, unassigned leads are strictly hidden and visible only to Admin
+  const accessibleLeads = React.useMemo(() => {
+    if (isAdmin) return leads;
+    return leads.filter(lead => {
+      const isUnassigned = !lead.assignedTo || lead.assignedToName === 'Unassigned';
+      return !isUnassigned;
+    });
+  }, [leads, isAdmin]);
+
+  const filteredLeads = accessibleLeads.filter(lead => {
     const matchesSearch = lead.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           lead.contactPerson.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           lead.location.toLowerCase().includes(searchQuery.toLowerCase());
@@ -252,9 +261,9 @@ function LeadsScreen({
       .join(' ');
   };
 
-  const banksCount = leads.filter(l => l.type === 'Cooperative Bank').length;
-  const societiesCount = leads.filter(l => l.type === 'Cooperative Society').length;
-  const auditorsCount = leads.filter(l => l.type === 'CA Firm / Auditor').length;
+  const banksCount = accessibleLeads.filter(l => l.type === 'Cooperative Bank').length;
+  const societiesCount = accessibleLeads.filter(l => l.type === 'Cooperative Society').length;
+  const auditorsCount = accessibleLeads.filter(l => l.type === 'CA Firm / Auditor').length;
 
   const isFiltered = searchQuery !== '' || filterType !== 'All' || filterModule !== 'All';
 
@@ -273,7 +282,7 @@ function LeadsScreen({
           onClick={() => setFilterType('All')}
         >
           <span>All Leads</span>
-          <span className="quick-filter-count">{leads.length}</span>
+          <span className="quick-filter-count">{accessibleLeads.length}</span>
         </button>
         <button 
           className={`quick-filter-pill ${filterType === 'Cooperative Bank' ? 'active' : ''}`}
@@ -363,7 +372,7 @@ function LeadsScreen({
             </span>
           </div>
           <span style={{ fontSize: '0.825rem', color: 'var(--text-muted)', fontWeight: '600' }}>
-            Showing {filteredLeads.length} of {leads.length} Leads
+            Showing {filteredLeads.length} of {accessibleLeads.length} Leads
           </span>
         </div>
         <div className="table-container">

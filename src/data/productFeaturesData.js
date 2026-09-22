@@ -29,7 +29,7 @@ export const productCategories = [
     icon: 'ArrowLeftRight',
     videoUrl: '/videos/VAHT-UFOGpM.mp4',
     shortDescription: 'Frictionless Payments, P2P, Merchant QR, and enterprise PA / PG / PPI payment gateway infrastructure & white-label APIs.',
-    purpose: 'Powers multi-channel money movement pipelines connecting member wallets, bank accounts, UPI 2.0, NPCI settlement engines, and PPI prepaid card issuance.',
+    purpose: 'Powers multi-channel money movement pipelines connecting member savings, bank accounts, UPI 2.0, NPCI settlement engines, and PPI prepaid card issuance.',
     primaryUsers: ['Customer', 'Field Agent', 'Cashier', 'Core Banking Engine'],
     businessValue: 'Delivers 99.99% uptime payment gateway infrastructure with sub-3 second median settlement and automated fraud detection.',
     featureCount: 4
@@ -43,10 +43,10 @@ export const productCategories = [
     group: 'Customer',
     icon: 'Zap',
     videoUrl: '/videos/VAHT-cjuGd0.mp4',
-    shortDescription: 'Automated passive wealth booster — automatically sweeping idle wallet savings into high-yield deposits and reverse sweeping on demand.',
-    purpose: 'Maximizes interest yield for members by dynamically sweeping surplus wallet balances above a threshold into short-term deposit units, with LIFO reverse sweeps for liquidity.',
+    shortDescription: 'Automated passive wealth booster — automatically sweeping idle saving balances into high-yield deposits and reverse sweeping on demand.',
+    purpose: 'Maximizes interest yield for members by dynamically sweeping surplus saving balances above a threshold into short-term deposit units, with LIFO reverse sweeps for liquidity.',
     primaryUsers: ['Customer', 'Core Banking Engine'],
-    businessValue: 'Optimizes capital yield for members while preserving 100% instant liquidity for daily wallet expenses.',
+    businessValue: 'Optimizes capital yield for members while preserving 100% instant liquidity for daily saving expenses.',
     featureCount: 2
   },
   {
@@ -99,15 +99,15 @@ export const productCategories = [
     number: 7,
     slideNumber: '07 / 16',
     slug: 'loan-credit-lifecycle',
-    name: 'Loan & Credit Lifecycle Engine',
+    name: 'Loan Origination, Underwriting & Repayment Flow',
     group: 'Lending',
     icon: 'Briefcase',
     videoUrl: '/videos/VAHT-d8a-SA.mp4',
-    shortDescription: 'End-to-end credit lifecycle (Personal, Gold, Business, Agriculture, JLG) with multi-stage approval funnel from customer eSign to chairman sanction.',
+    shortDescription: 'Covers Personal, Business, Agriculture, and Gold Loans, JLG Groups, eSign digital contracts, cashier allocation, disbursement, and EMI repayments.',
     purpose: 'Controls the complete credit origination and recovery cycle — from eSign application to manager audit, chairman sanction, automated disbursal, and loan dossiers.',
-    primaryUsers: ['Customer', 'Field Agent', 'Branch Manager', 'Chairman / Admin'],
+    primaryUsers: ['Customer', 'Field Agent', 'Branch Manager', 'Credit Officer', 'Cashier', 'Chairman / Admin'],
     businessValue: 'Drives loan portfolio growth, reduces non-performing assets (NPA) via automated collection schedules, and ensures multi-tier executive risk governance.',
-    featureCount: 2
+    featureCount: 6
   },
   {
     id: 'loan-interest-calculator',
@@ -133,11 +133,11 @@ export const productCategories = [
     group: 'Operations',
     icon: 'Footprints',
     videoUrl: '/videos/VAHT-Xq8NdY.mp4',
-    shortDescription: 'Field Operations & Doorstep Banking — agent mobile app for offline customer onboarding, doorstep cash collection, thermal printing, and vault handovers.',
+    shortDescription: 'Field Operations & Doorstep Banking — agent mobile app for offline customer onboarding, doorstep cash collection, thermal printing, and EOD branch vault handovers.',
     purpose: 'Equips door-to-door field agents with offline transaction caching, bluetooth thermal receipt printing, real-time agent GPS audit trails, and end-of-day branch till handovers.',
-    primaryUsers: ['Field Agent', 'Branch Manager'],
+    primaryUsers: ['Field Agent', 'Branch Manager', 'Cashier'],
     businessValue: 'Maximizes field collection velocity, expands financial inclusion in rural sectors, and eliminates manual ledger errors.',
-    featureCount: 2
+    featureCount: 4
   },
   {
     id: 'branch-cash-operations',
@@ -155,23 +155,8 @@ export const productCategories = [
     featureCount: 3
   },
   {
-    id: 'manager-branch-management',
-    number: 11,
-    slideNumber: '13 / 16',
-    slug: 'manager-branch-management',
-    name: 'Branch Management & Loan Verification',
-    group: 'Operations',
-    icon: 'Building2',
-    videoUrl: '/videos/VAHT-UoLsO8.mp4',
-    shortDescription: 'Supervising branch performance, first-stage loan reviews, compliance exceptions, agent collection metrics, and branch health dashboards.',
-    purpose: 'Provides branch managers with full supervisory controls over daily customer approvals, field agent collection metrics, first-stage credit audits, and local branch compliance.',
-    primaryUsers: ['Branch Manager'],
-    businessValue: 'Empowers branch managers to optimize operational productivity, enforce KYC compliance, and control credit risk locally.',
-    featureCount: 3
-  },
-  {
     id: 'ai-intelligent-automation',
-    number: 12,
+    number: 11,
     slideNumber: '09 / 16',
     slug: 'ai-intelligent-automation',
     name: 'AI Advisor & Intelligent Automation',
@@ -186,7 +171,7 @@ export const productCategories = [
   },
   {
     id: 'executive-governance-analytics',
-    number: 13,
+    number: 12,
     slideNumber: '14 & 16 / 16',
     slug: 'executive-governance-analytics',
     name: 'Executive Governance, Accounting & Analytics',
@@ -204,7 +189,7 @@ export const productCategories = [
 export const moduleGroups = [
   { name: 'Customer', categorySlugs: ['customer-onboarding', 'payments-money-movement', 'auto-sweep-savings', 'fixed-recurring-deposits', 'micro-savings-gullak', 'member-shares-equity'] },
   { name: 'Lending', categorySlugs: ['loan-credit-lifecycle', 'loan-interest-calculator'] },
-  { name: 'Operations', categorySlugs: ['field-operations', 'branch-cash-operations', 'manager-branch-management'] },
+  { name: 'Operations', categorySlugs: ['field-operations', 'branch-cash-operations'] },
   { name: 'Intelligence', categorySlugs: ['ai-intelligent-automation'] },
   { name: 'Governance', categorySlugs: ['executive-governance-analytics'] }
 ];
@@ -318,7 +303,7 @@ const rawFeaturesData = [
     capabilities: ['Biometric fingerprint & FaceID login', 'Real-time multi-account dashboard view', 'Instant e-Passbook PDF & Excel statement generation', 'Push notification alerts for all credit & debit transactions'],
     workflow: [
       { step: 1, title: 'Biometric Auth', description: 'Member logs in with fingerprint or FaceID.' },
-      { step: 2, title: 'Dashboard Overview', description: 'Inspects savings, wallet, deposit, and active loan balances.' },
+      { step: 2, title: 'Dashboard Overview', description: 'Inspects savings, deposit, and active loan balances.' },
       { step: 3, title: 'Self-Service Action', description: 'Initiates transfer, downloads statement, or checks EMI schedule.' }
     ],
     businessValue: [
@@ -330,9 +315,9 @@ const rawFeaturesData = [
     id: 'onboard-help-desk', number: '1.7', categorySlug: 'customer-onboarding',
     title: 'Member Support Tickets & Referral Reward Engine',
     shortDescription: 'Enables members to raise digital support tickets (e.g. duplicate passbook, address change), track SLA timers, and earn referral rewards.',
-    description: 'Provides in-app support ticketing and member referral tracking. Members can raise service queries, upload proof documents, track resolution countdowns, and receive wallet cashback rewards for referring new active members.',
+    description: 'Provides in-app support ticketing and member referral tracking. Members can raise service queries, upload proof documents, track resolution countdowns, and receive saving cashback rewards for referring new active members.',
     roles: ['Customer', 'Branch Manager'], platforms: ['Customer Mobile App', 'Manager Dashboard'],
-    capabilities: ['Support ticket creation with SLA countdown timer', 'Categorization tags (Passbook, KYC, Wallet, Loan, Equity)', 'Member referral link generator & automated cashback credit', 'Branch manager ticket assignment & resolution queue'],
+    capabilities: ['Support ticket creation with SLA countdown timer', 'Categorization tags (Passbook, KYC, Saving, Loan, Equity)', 'Member referral link generator & automated cashback credit', 'Branch manager ticket assignment & resolution queue'],
     workflow: [
       { step: 1, title: 'Raise Support Ticket', description: 'Customer selects issue category and submits request.' },
       { step: 2, title: 'SLA Timer Starts', description: 'System assigns ticket ID (e.g. TCK-2026-4401) and routes to branch.' },
@@ -348,16 +333,16 @@ const rawFeaturesData = [
   // MODULE 2: Payments, Money Movement & Gateway Infra
   // ==========================================
   {
-    id: 'pay-wallet-funding', number: '2.1', categorySlug: 'payments-money-movement',
-    title: 'Wallet Top-Up & Multi-Source Funding Engine',
-    shortDescription: 'Add funds to digital wallet balance via NPCI UPI, debit cards, netbanking, or branch counter cash deposit.',
-    description: 'Enables members to top up their Fivopay digital wallet balance using multiple payment channels, ensuring immediate liquidity for daily transactions and bill payments.',
+    id: 'pay-saving-funding', number: '2.1', categorySlug: 'payments-money-movement',
+    title: 'Saving Top-Up & Multi-Source Funding Engine',
+    shortDescription: 'Add funds to digital saving balance via NPCI UPI, debit cards, netbanking, or branch counter cash deposit.',
+    description: 'Enables members to top up their Fivopay digital saving balance using multiple payment channels, ensuring immediate liquidity for daily transactions and bill payments.',
     roles: ['Customer', 'Cashier'], platforms: ['Customer Mobile App', 'Manager Dashboard', 'Payment Infra'],
-    capabilities: ['Multi-channel wallet top-up engine', 'Zero-fee UPI wallet loading', 'Instant webhook balance reconciliation', 'Cashier desk physical cash top-up'],
+    capabilities: ['Multi-channel saving top-up engine', 'Zero-fee UPI saving loading', 'Instant webhook balance reconciliation', 'Cashier desk physical cash top-up'],
     workflow: [
       { step: 1, title: 'Select Top-Up Mode', description: 'Choose UPI, Netbanking, Card, or Branch Cash deposit.' },
       { step: 2, title: 'Authorize Payment', description: 'Enter UPI PIN or authorize via gateway.' },
-      { step: 3, title: 'Balance Credited', description: 'Wallet balance updated instantly with notification.' }
+      { step: 3, title: 'Balance Credited', description: 'Saving balance updated instantly with notification.' }
     ],
     businessValue: [
       { title: 'Stored Liquidity', description: 'Provides stored-value liquidity for seamless instant transactions.' }
@@ -385,11 +370,11 @@ const rawFeaturesData = [
     id: 'pay-gateway-infra', number: '2.3', categorySlug: 'payments-money-movement',
     title: 'PA / PG / PPI Payment Infrastructure & White-Label APIs',
     shortDescription: 'Enterprise Payment Aggregator (PA), Payment Gateway (PG), and Prepaid Payment Instrument (PPI) licensing & API engine.',
-    description: 'Manages enterprise payment integrations connecting NPCI UPI, card networks, banking APIs, settlement pipelines, and PPI wallet/card issuance engines for white-label partners.',
+    description: 'Manages enterprise payment integrations connecting NPCI UPI, card networks, banking APIs, settlement pipelines, and PPI saving/card issuance engines for white-label partners.',
     roles: ['Admin', 'Core Banking Engine'], platforms: ['Payment Infra', 'Manager Dashboard'],
-    capabilities: ['Payment Aggregator (PA) multi-source automated settlement', 'Payment Gateway (PG) fast 3DS transaction processing', 'Prepaid Payment Instrument (PPI) wallet/card issuance', 'White-Label PA, PG, and PPI infrastructure APIs for partner fintechs'],
+    capabilities: ['Payment Aggregator (PA) multi-source automated settlement', 'Payment Gateway (PG) fast 3DS transaction processing', 'Prepaid Payment Instrument (PPI) saving/card issuance', 'White-Label PA, PG, and PPI infrastructure APIs for partner fintechs'],
     workflow: [
-      { step: 1, title: 'Process Payment / Issue PPI', description: 'Executes gateway authorization or provisions prepaid wallet.' },
+      { step: 1, title: 'Process Payment / Issue PPI', description: 'Executes gateway authorization or provisions prepaid saving.' },
       { step: 2, title: 'Automated Settlement', description: 'Batches daily transactions and settles to merchant bank accounts.' }
     ],
     businessValue: [
@@ -403,11 +388,11 @@ const rawFeaturesData = [
     shortDescription: 'Generates a 30-minute secure 6-digit withdrawal token (CW-781920) for debit-cardless physical cash dispensing at branch cashier counters.',
     description: 'Enables cardless cash withdrawals at any cooperative branch counter. Members request cash in app, generating a single-use 6-digit cryptographic verification code presented to the branch teller.',
     roles: ['Customer', 'Cashier'], platforms: ['Customer Mobile App', 'Manager Dashboard'],
-    capabilities: ['Single-use 6-digit timed withdrawal code generation', 'Strict 30-minute expiration window rate limiting', 'Instant cashier teller verification & wallet debiting', 'Real-time SMS advice upon counter cash receipt'],
+    capabilities: ['Single-use 6-digit timed withdrawal code generation', 'Strict 30-minute expiration window rate limiting', 'Instant cashier teller verification & saving debiting', 'Real-time SMS advice upon counter cash receipt'],
     workflow: [
       { step: 1, title: 'Request Withdrawal Code', description: 'Customer inputs amount in app and requests counter cash code.' },
       { step: 2, title: 'Present Code at Desk', description: 'Presents 6-digit code to branch cashier teller.' },
-      { step: 3, title: 'Cash Dispensed', description: 'Cashier validates code, dispenses cash, and wallet is debited.' }
+      { step: 3, title: 'Cash Dispensed', description: 'Cashier validates code, dispenses cash, and saving is debited.' }
     ],
     businessValue: [
       { title: 'Cardless Convenience', description: 'Eliminates plastic ATM debit card issuing costs while securing counter cash withdrawals.' }
@@ -420,13 +405,13 @@ const rawFeaturesData = [
   // ==========================================
   {
     id: 'savings-auto-sweep-threshold', number: '3.1', categorySlug: 'auto-sweep-savings',
-    title: 'Wallet Balance Threshold Configuration',
-    shortDescription: 'User configures maximum idle wallet balance (e.g. ₹10,000) for automated yield optimization.',
-    description: 'Configures custom wallet threshold limits. Any surplus funds accumulated above the threshold are automatically swept into high-yield term deposit units.',
+    title: 'Saving Balance Threshold Configuration',
+    shortDescription: 'User configures maximum idle saving balance (e.g. ₹10,000) for automated yield optimization.',
+    description: 'Configures custom saving threshold limits. Any surplus funds accumulated above the threshold are automatically swept into high-yield term deposit units.',
     roles: ['Customer'], platforms: ['Customer Mobile App'],
     capabilities: ['Custom threshold balance slider (e.g. ₹10,000 limit)', 'Automated sweep frequency rules', 'Real-time surplus balance visualizer'],
     workflow: [
-      { step: 1, title: 'Set Threshold Limit', description: 'Member sets wallet threshold limit in mobile app.' }
+      { step: 1, title: 'Set Threshold Limit', description: 'Member sets saving threshold limit in mobile app.' }
     ],
     businessValue: [
       { title: 'Yield Maximization', description: 'Ensures idle member money is automatically invested into interest-bearing products.' }
@@ -436,16 +421,16 @@ const rawFeaturesData = [
   {
     id: 'savings-auto-sweep-engine', number: '3.2', categorySlug: 'auto-sweep-savings',
     title: 'Automated Sweep & LIFO Reverse Sweep Engine',
-    shortDescription: 'Excess balance automatically moved to short-term FD units; reverse swept LIFO when wallet expenses occur.',
-    description: 'Automated yield optimization engine that sweeps surplus wallet balances into short-term FD units overnight, with LIFO reverse sweeps when wallet expenses occur.',
+    shortDescription: 'Excess balance automatically moved to short-term FD units; reverse swept LIFO when saving expenses occur.',
+    description: 'Automated yield optimization engine that sweeps surplus saving balances into short-term FD units overnight, with LIFO reverse sweeps when saving expenses occur.',
     roles: ['Customer', 'Core Banking Engine'], platforms: ['Customer Mobile App', 'Core Banking Engine'],
     capabilities: ['Automatic FD unit creation for surplus funds', 'LIFO (Last-In-First-Out) reverse sweep liquidity protection', 'Real-time interest earned optimization dashboard'],
     workflow: [
       { step: 1, title: 'Auto-Sweep Surplus', description: 'Engine sweeps excess balance into short-term FD units overnight.' },
-      { step: 2, title: 'Reverse Sweep Liquidity', description: 'When wallet dips below threshold, engine reverse sweeps FD units automatically.' }
+      { step: 2, title: 'Reverse Sweep Liquidity', description: 'When saving dips below threshold, engine reverse sweeps FD units automatically.' }
     ],
     businessValue: [
-      { title: 'Maximized Interest', description: 'Earns higher term deposit rates while keeping 100% daily wallet liquidity.' }
+      { title: 'Maximized Interest', description: 'Earns higher term deposit rates while keeping 100% daily saving liquidity.' }
     ],
     videoUrl: '/videos/VAHT-cjuGd0.mp4'
   },
@@ -463,7 +448,7 @@ const rawFeaturesData = [
     workflow: [
       { step: 1, title: 'Select Deposit Product', description: 'Choose Fixed Deposit or Recurring Deposit.' },
       { step: 2, title: 'Configure Tenure & Amount', description: 'Select tenure (3 to 120 months) and payout frequency.' },
-      { step: 3, title: 'Instant Booking', description: 'Debits wallet balance and issues digital deposit certificate.' }
+      { step: 3, title: 'Instant Booking', description: 'Debits saving balance and issues digital deposit certificate.' }
     ],
     businessValue: [
       { title: 'Stable Liability Capital', description: 'Secures long-term stable liability funding for cooperative lending portfolio.' }
@@ -474,12 +459,12 @@ const rawFeaturesData = [
     id: 'fdrd-maturity-payout', number: '4.2', categorySlug: 'fixed-recurring-deposits',
     title: 'Deposit Maturity Settlement & Auto-Renewal',
     shortDescription: 'Automated maturity calculation, principal plus interest payout crediting, and auto-renewal options.',
-    description: 'Manages deposit maturity settlements. Automatically calculates compound interest accrued, credits maturity proceeds to member savings wallet, or executes auto-renewal based on standing instructions.',
+    description: 'Manages deposit maturity settlements. Automatically calculates compound interest accrued, credits maturity proceeds to member saving account, or executes auto-renewal based on standing instructions.',
     roles: ['Customer', 'Branch Manager'], platforms: ['Customer Mobile App', 'Manager Dashboard'],
     capabilities: ['Automated maturity date calculator', 'Auto-renewal principal + interest option', 'Premature withdrawal penalty calculator'],
     workflow: [
       { step: 1, title: 'Maturity Reached', description: 'System triggers automated maturity payout.' },
-      { step: 2, title: 'Credit Payout', description: 'Credits principal and interest directly to member wallet.' }
+      { step: 2, title: 'Credit Payout', description: 'Credits principal and interest directly to member saving account.' }
     ],
     businessValue: [
       { title: 'Automated Settlement', description: 'Eliminates manual cheque processing for deposit maturities.' }
@@ -526,7 +511,7 @@ const rawFeaturesData = [
     id: 'gullak-auto-sweep', number: '5.2', categorySlug: 'micro-savings-gullak',
     title: 'Automated Micro-Sweeps & Digital Vault Locking',
     shortDescription: 'Automated daily ₹50/₹100 micro-debits into goal vaults with digital lock protection.',
-    description: 'Automatically sweeps small daily or weekly amounts from primary wallet into goal vaults, locking funds until the target date is reached to prevent early impulse spending.',
+    description: 'Automatically sweeps small daily or weekly amounts from primary saving into goal vaults, locking funds until the target date is reached to prevent early impulse spending.',
     roles: ['Customer'], platforms: ['Customer Mobile App'],
     capabilities: ['Automated daily/weekly micro-sweeps (₹20, ₹50, ₹100)', 'Digital vault lock protection to prevent early impulse break', 'Emergency vault unlock with verification PIN'],
     workflow: [
@@ -546,12 +531,12 @@ const rawFeaturesData = [
     id: 'eq-share-catalog', number: '6.1', categorySlug: 'member-shares-equity',
     title: 'Member Share Capital Subscription & Allotment',
     shortDescription: 'Browse cooperative share capital packages, buy equity shares digitally, and issue digital share certificates.',
-    description: 'Manages member equity ownership in cooperative financial institutions. Members can purchase share packages directly using their savings wallet or bank account, with instant entry in the central share allotment register.',
+    description: 'Manages member equity ownership in cooperative financial institutions. Members can purchase share packages directly using their saving account or bank account, with instant entry in the central share allotment register.',
     roles: ['Customer', 'Branch Manager', 'Chairman / Admin'], platforms: ['Customer Mobile App', 'Manager Dashboard'],
-    capabilities: ['Share package pricing tier grid', 'Instant wallet debit for share subscription', 'Automated share certificate PDF generation', 'Share allotment register entry & ledger tracking'],
+    capabilities: ['Share package pricing tier grid', 'Instant saving debit for share subscription', 'Automated share certificate PDF generation', 'Share allotment register entry & ledger tracking'],
     workflow: [
       { step: 1, title: 'Browse Share Tiers', description: 'Inspect available share classes and face values.' },
-      { step: 2, title: 'Subscribe & Pay', description: 'Select share count and authorize wallet payment.' },
+      { step: 2, title: 'Subscribe & Pay', description: 'Select share count and authorize saving payment.' },
       { step: 3, title: 'Digital Allotment', description: 'Share register updated and certificate issued instantly.' }
     ],
     businessValue: [
@@ -562,14 +547,14 @@ const rawFeaturesData = [
   {
     id: 'eq-dividend-distribution', number: '6.2', categorySlug: 'member-shares-equity',
     title: 'Automated Dividend Calculation & Distribution',
-    shortDescription: 'Computes annual cooperative dividend payouts based on share equity holdings and credits member wallets.',
+    shortDescription: 'Computes annual cooperative dividend payouts based on share equity holdings and credits member savings.',
     description: 'Automates annual dividend calculation and distribution across all active cooperative members based on their share capital ratio and board-approved dividend percentage.',
     roles: ['Chairman / Admin', 'Branch Manager', 'Customer'], platforms: ['Manager Dashboard', 'Customer Mobile App'],
-    capabilities: ['Pro-rata dividend calculation engine', 'Board resolution dividend percentage setup', 'Bulk automated wallet dividend crediting', 'Dividend tax deduction (TDS) statement generation'],
+    capabilities: ['Pro-rata dividend calculation engine', 'Board resolution dividend percentage setup', 'Bulk automated saving dividend crediting', 'Dividend tax deduction (TDS) statement generation'],
     workflow: [
       { step: 1, title: 'Set Dividend Rate', description: 'Chairman configures approved dividend rate (e.g. 8% p.a.).' },
       { step: 2, title: 'Compute Share Payouts', description: 'Engine calculates exact dividend for every shareholder.' },
-      { step: 3, title: 'Bulk Crediting', description: 'Credits dividend payouts directly into member wallets with SMS advice.' }
+      { step: 3, title: 'Bulk Crediting', description: 'Credits dividend payouts directly into member savings with SMS advice.' }
     ],
     businessValue: [
       { title: 'Automated Dividend Payouts', description: 'Eliminates manual dividend cheque printing and distribution delays.' }
@@ -578,45 +563,138 @@ const rawFeaturesData = [
   },
 
   // ==========================================
-  // MODULE 7: Loan & Credit Lifecycle Engine
+  // MODULE 7: Loan Origination, Underwriting, Gold Vault & Repayment Flow
   // ==========================================
   {
-    id: 'loan-flow-funnel', number: '7.1', categorySlug: 'loan-credit-lifecycle',
-    title: 'End-to-End Credit Lifecycle & Multi-Stage Approval Funnel',
-    shortDescription: 'Multi-role credit lifecycle: Customer eSign -> Manager Verification -> Chairman Approval -> Disbursal.',
-    description: 'Controls the full credit lifecycle across Personal, Business, Gold, Agriculture, Individual, and Joint Liability Group (JLG) loans. Tracks loan dossiers seamlessly across customer eSign, manager verification, chairman sanction, and disbursal.',
-    roles: ['Customer', 'Field Agent', 'Branch Manager', 'Chairman / Admin'], platforms: ['Customer Mobile App', 'Field Agent App', 'Manager Dashboard'],
+    id: 'loan-application-origination', number: '7.1', categorySlug: 'loan-credit-lifecycle',
+    title: 'Loan Application & Origination',
+    shortDescription: 'Multi-category credit origination covering Personal, Business, Agriculture, and Gold Loans with automated estimated EMI calculation.',
+    description: 'Enables borrowers and branch agents to originate credit applications across Personal, Business, Agriculture, and Gold loan products. Evaluates customer KYC verification, captures loan purpose and requested tenure, and generates an initial loan dossier with real-time estimated EMI calculations.',
+    roles: ['Customer', 'Field Agent', 'Branch Manager'], platforms: ['Customer Mobile App', 'Field Agent App', 'Manager Dashboard'],
     capabilities: [
-      'Customer digital application & Aadhaar eSign (100%)',
-      'Manager credit audit & document verification (78%)',
-      'Chairman executive approval & sanction order (62%)',
-      'Automated disbursal & EMI schedule creation (58%)'
+      'Multi-product loan origination (Personal, Business, Agriculture, Gold Loans)',
+      'Real-time estimated EMI calculation engine based on principal and tenure',
+      'Automated KYC verification check prior to application submission',
+      'Flexible tenure and repayment frequency selection (Monthly, Bi-weekly, Weekly)'
     ],
     workflow: [
-      { step: 1, title: 'Customer Application & eSign', description: 'Customer submits loan dossier and eSigns contract.' },
-      { step: 2, title: 'Manager Verification', description: 'Branch manager audits income proof and collateral.' },
-      { step: 3, title: 'Chairman Approval', description: 'Chairman reviews and digitally sanctions loan.' },
-      { step: 4, title: 'Disbursal & EMI Schedule', description: 'Funds disbursed to wallet; EMI schedule created on ledger.' }
+      { step: 1, title: 'Select Product & Parameters', description: 'Customer or agent selects loan product, principal amount, tenure, and repayment frequency.' },
+      { step: 2, title: 'KYC & Eligibility Verification', description: 'System validates KYC status, Aadhaar/PAN tokens, and borrower credit profile.' },
+      { step: 3, title: 'Originate Loan Dossier', description: 'Engine creates loan dossier with unique Loan ID (LN-YYYY-XXXXXX) and initial estimated EMI schedule.' }
     ],
     businessValue: [
-      { title: 'Credit Portfolio Control', description: 'Drives credit portfolio growth while enforcing multi-tier risk governance.' }
+      { title: 'Instant Application Turnaround', description: 'Reduces loan application submission time from days to under 2 minutes.' }
     ],
     videoUrl: '/videos/VAHT-d8a-SA.mp4'
   },
   {
-    id: 'loan-esign-disbursement', number: '7.2', categorySlug: 'loan-credit-lifecycle',
-    title: 'Paperless eSign Agreement & Controlled Disbursal Engine',
-    shortDescription: 'Attaches Aadhaar/digital eSignature to approved loan contracts and triggers controlled cash/IMPS/NEFT disbursal into member accounts.',
-    description: 'Automates loan contract execution and funds disbursement. Once sanctioned by the Chairman, the system generates a legally binding eSign contract, receives digital signature, and dispatches funds via IMPS/NEFT or counter cash queue.',
-    roles: ['Customer', 'Branch Manager', 'Chairman / Admin', 'Cashier'], platforms: ['Customer Mobile App', 'Manager Dashboard'],
-    capabilities: ['Legal Aadhaar eSign contract execution', 'Controlled loan disbursal queue (Cashier counter vs Instant IMPS/NEFT)', 'Automated EMI schedule creation on central ledger', 'Sanction letter & agreement PDF archiving'],
+    id: 'loan-jlg-group', number: '7.2', categorySlug: 'loan-credit-lifecycle',
+    title: 'Joint Liability Group (JLG Loan)',
+    shortDescription: 'Community and peer-guaranteed microfinance group creation and collective credit liability management.',
+    description: 'Facilitates community-based Joint Liability Group (JLG) loan origination for microfinance and rural self-help groups. Links group leaders and peer members together, enabling shared mutual guarantee and collective credit underwriting.',
+    roles: ['Customer', 'Field Agent', 'Branch Manager'], platforms: ['Customer Mobile App', 'Field Agent App', 'Manager Dashboard'],
+    capabilities: [
+      'Peer group formation with designated group leader and member IDs',
+      'Joint liability mutual guarantee tracking across all group participants',
+      'Group-level credit ceiling and cross-guarantee risk assessment',
+      'Doorstep group biometric verification for microfinance circles'
+    ],
     workflow: [
-      { step: 1, title: 'Digital Contract eSign', description: 'Customer eSigns sanctioned loan contract using Aadhaar OTP.' },
-      { step: 2, title: 'Disbursement Authorization', description: 'Manager authorizes fund release mode (IMPS or Counter Cash).' },
-      { step: 3, title: 'Ledger Post & EMI Trigger', description: 'Funds credited; active loan record and EMI schedule created on ledger.' }
+      { step: 1, title: 'Register JLG Group', description: 'Field agent or leader inputs group name, leader ID, and member user IDs.' },
+      { step: 2, title: 'Peer Mutual Guarantee', description: 'Group members verify mutual consent and accept collective liability terms.' },
+      { step: 3, title: 'Group Credit Sanction', description: 'Credit officer audits group repayment capacity and issues group sanction.' }
     ],
     businessValue: [
-      { title: 'Instant Disbursal', description: 'Slashes loan disbursement turnaround from 5 days to under 15 minutes.' }
+      { title: 'High Recovery Assurance', description: 'Leverages social collateral and peer accountability to achieve 99%+ recovery rates.' }
+    ],
+    videoUrl: '/videos/VAHT-d8a-SA.mp4'
+  },
+  {
+    id: 'loan-underwriting-approval', number: '7.3', categorySlug: 'loan-credit-lifecycle',
+    title: 'Loan Underwriting, AI Risk Analysis & Approval',
+    shortDescription: 'Automated AI credit risk scoring, credit officer verification, and multi-tier executive sanctioning or rejection.',
+    description: 'Integrates machine learning credit risk scoring with human credit officer underwriting. Evaluates borrower banking telemetry, repayment probabilities, and collateral valuation, empowering officers and executives to sanction or reject with full audit remarks.',
+    roles: ['Credit Officer', 'Branch Manager', 'Chairman / Admin'], platforms: ['Manager Dashboard'],
+    capabilities: [
+      'AI-driven creditworthiness scoring & default probability model (GET /loan/analyze/:id)',
+      'Credit officer document verification and field check attestation (PATCH /loan/verify-loan/:id)',
+      'Multi-tier executive approval with custom interest rate & amount sanctions (PATCH /loan/approve-loan/:id)',
+      'Audit-trailed rejection workflow with detailed reason remarks (PATCH /loan/reject-loan/:id)'
+    ],
+    workflow: [
+      { step: 1, title: 'AI Risk Analysis', description: 'Algorithmic model calculates AI credit score, debt-service ratio, and default probability.' },
+      { step: 2, title: 'Credit Officer Verification', description: 'Credit officer validates income proofs, collateral valuation, and attests dossier.' },
+      { step: 3, title: 'Executive Sanction or Rejection', description: 'Chairman/admin approves final amount and interest rate, or logs rejection with remarks.' }
+    ],
+    businessValue: [
+      { title: 'Proactive NPA Prevention', description: 'Minimizes bad loans and defaults through AI-backed risk profiling and strict underwriting checks.' }
+    ],
+    videoUrl: '/videos/VAHT-d8a-SA.mp4'
+  },
+  {
+    id: 'loan-digital-esign', number: '7.4', categorySlug: 'loan-credit-lifecycle',
+    title: 'Paperless Digital Agreement & eSign',
+    shortDescription: 'Generates legally binding digital loan contracts with Aadhaar OTP and digital signature token submission.',
+    description: 'Automates the legal contract binding phase without requiring paper documentation. Formats sanction terms, repayment schedules, and covenants into a legally binding digital contract, executing eSignatures via Aadhaar OTP or digital certificate tokens.',
+    roles: ['Customer', 'Branch Manager', 'Legal Auditor'], platforms: ['Customer Mobile App', 'Manager Dashboard'],
+    capabilities: [
+      'Automated digital loan agreement and sanction contract generation (POST /esign/generate-contract)',
+      'Paperless eSign integration with digital signature image/token submission (POST /esign/submit-signature)',
+      'Cryptographic signature verification and tamper-proof PDF sealing',
+      'Instant contract archival in secure document vault with immutable audit logs'
+    ],
+    workflow: [
+      { step: 1, title: 'Generate Digital Contract', description: 'Engine builds loan agreement with approved amount, tenure, interest rate, and covenants.' },
+      { step: 2, title: 'Submit eSignature', description: 'Borrower reviews terms and submits digital signature image or Aadhaar OTP token.' },
+      { step: 3, title: 'Legally Bound Archival', description: 'Contract locked with SHA-256 hash and archived for statutory audit compliance.' }
+    ],
+    businessValue: [
+      { title: '100% Paperless Legal Compliance', description: 'Cuts loan contract turnaround from 3 days to under 60 seconds with full legal enforceability.' }
+    ],
+    videoUrl: '/videos/VAHT-d8a-SA.mp4'
+  },
+  {
+    id: 'loan-cashier-disbursement', number: '7.5', categorySlug: 'loan-credit-lifecycle',
+    title: 'Cashier Allocation & Disbursement',
+    shortDescription: 'Assigns sanctioned loans to branch cashier counter desks or initiates instant wallet and bank disbursals.',
+    description: 'Controls the final mile of loan funding. Managers allocate verified loans to specific cashier desks for physical counter cash payout or trigger automated electronic disbursements directly into customer savings accounts or wallets.',
+    roles: ['Branch Manager', 'Cashier', 'Customer'], platforms: ['Manager Dashboard', 'Customer Mobile App'],
+    capabilities: [
+      'Cashier employee desk allocation and queue management (PATCH /loan/allocate-cashier/:id)',
+      'Instant electronic loan disbursement to saving account / wallet credit (PATCH /loan/disburse-loan/:id)',
+      'Physical counter cash dispensing verification with dual cashier approval',
+      'Immediate general ledger entry posting and loan account activation'
+    ],
+    workflow: [
+      { step: 1, title: 'Allocate Cashier Desk', description: 'Manager assigns sanctioned loan to specific cashier employee ID.' },
+      { step: 2, title: 'Execute Disbursement', description: 'Cashier dispenses cash or triggers automated electronic wallet/account credit.' },
+      { step: 3, title: 'Ledger Post & Activation', description: 'System debits loan asset ledger, credits borrower account, and activates repayment schedule.' }
+    ],
+    businessValue: [
+      { title: 'Controlled Cash Governance', description: 'Prevents unauthorized payouts and maintains dual-custody audit logs for all disbursed capital.' }
+    ],
+    videoUrl: '/videos/VAHT-d8a-SA.mp4'
+  },
+  {
+    id: 'loan-emi-repayment', number: '7.6', categorySlug: 'loan-credit-lifecycle',
+    title: 'Loan EMI Repayment & Restructuring',
+    shortDescription: 'Complete repayment suite: EMI schedule, wallet payment, Razorpay gateway, restructuring, and agent recovery assignment.',
+    description: 'Manages the active loan servicing and recovery lifecycle. Borrowers can inspect full EMI amortization schedules, execute instant wallet repayments, or pay via Razorpay gateway. Officers can adjust interest rates/tenures for restructuring, and assign field collection recovery agents for overdue loans.',
+    roles: ['Customer', 'Branch Manager', 'Recovery Agent', 'Credit Officer'], platforms: ['Customer Mobile App', 'Field Agent App', 'Manager Dashboard'],
+    capabilities: [
+      'Real-time loan EMI schedule retrieval with principal/interest split (GET /loan-emi/schedule/:loanId)',
+      'Instant self-service wallet EMI payment with automated ledger clearance (POST /loan/user/pay-loan-wallet)',
+      'Integrated Razorpay payment gateway order creation & verification (POST /loan/user/create-loan-payment-order & verify-loan-payment)',
+      'Loan restructuring engine for interest rate adjustments and tenure extensions (PATCH /loan/adjust-interest-rate/:id)',
+      'Automated overdue recovery agent assignment with field GPS tracking (POST /loan-recovery/assign-agent)'
+    ],
+    workflow: [
+      { step: 1, title: 'Inspect EMI Schedule', description: 'Customer checks upcoming installment dues, principal breakdown, and penalty status.' },
+      { step: 2, title: 'Execute Repayment', description: 'Borrower repays via wallet deduction or Razorpay payment gateway order.' },
+      { step: 3, title: 'Restructure or Recover', description: 'Credit officer can adjust interest rates, or assign overdue accounts to field recovery agents.' }
+    ],
+    businessValue: [
+      { title: 'Maximized Collection Velocity', description: 'Multiple payment rails and recovery automation cut delinquency and NPA rates by over 40%.' }
     ],
     videoUrl: '/videos/VAHT-d8a-SA.mp4'
   },
@@ -663,24 +741,76 @@ const rawFeaturesData = [
   // MODULE 9: Field Operations, Doorstep Banking & Outreach
   // ==========================================
   {
-    id: 'field-doorstep-collections', number: '9.1', categorySlug: 'field-operations',
-    title: 'Field Operations & Doorstep Outreach App',
-    shortDescription: 'Field Agent mobile app for offline customer onboarding, doorstep cash collection, thermal printing, and branch handovers.',
-    description: 'Equips door-to-door field agents with a dedicated mobile application for financial inclusion in rural sectors. Agents can onboard members offline, collect cash repayments, print thermal receipts, and perform end-of-day branch till handovers.',
+    id: 'field-doorstep-onboarding', number: '9.1', categorySlug: 'field-operations',
+    title: 'Doorstep Customer Onboarding & Offline KYC Outreach',
+    shortDescription: 'Field Agent mobile app for offline biometric customer registration, document camera OCR, and remote area financial inclusion.',
+    description: 'Empowers field agents to onboard new members in rural and unbanked areas without active internet connectivity. Agents capture customer details, parse identity documents with camera OCR, capture live photos, and securely cache encrypted registration dossiers for background synchronization upon returning to cellular network coverage.',
     roles: ['Field Agent', 'Branch Manager'], platforms: ['Field Agent App', 'Manager Dashboard'],
-    capabilities: ['Offline onboarding without active cellular connection', 'Bluetooth thermal printer receipt generation', 'Doorstep cash repayment collection & QR scan', 'End-of-day branch vault cash handover audit'],
+    capabilities: [
+      'Offline customer registration and profile creation without active internet',
+      'On-device camera OCR for Aadhaar, PAN, and identity documents',
+      'Live selfie photo capture with local biometric validation',
+      'Encrypted local dossier caching and automated background cloud sync'
+    ],
     workflow: [
-      { step: 1, title: 'Doorstep Visit', description: 'Agent visits customer home or shop.' },
-      { step: 2, title: 'Collect & Print Receipt', description: 'Collects cash repayment and prints thermal receipt.' },
-      { step: 3, title: 'Branch Till Handover', description: 'Deposits collected cash at branch counter at end of day.' }
+      { step: 1, title: 'Doorstep Customer Visit', description: 'Field agent visits prospective customer home or village booth.' },
+      { step: 2, title: 'Offline KYC & OCR Capture', description: 'Enters member profile, scans ID documents, and captures live photo.' },
+      { step: 3, title: 'Background Cloud Sync', description: 'Encrypted registration dossier automatically synchronizes to core ledger once online.' }
     ],
     businessValue: [
-      { title: 'Rural Outreach', description: 'Maximizes field collection velocity and brings doorstep banking to unbanked sectors.' }
+      { title: 'Rural Financial Inclusion', description: 'Enables 100% digital onboarding in remote dark zones with zero network connectivity.' }
     ],
     videoUrl: '/videos/VAHT-Xq8NdY.mp4'
   },
   {
-    id: 'field-agent-collections-kpi', number: '9.2', categorySlug: 'field-operations',
+    id: 'field-doorstep-collections', number: '9.2', categorySlug: 'field-operations',
+    title: 'Doorstep Cash Repayment & Pigmy Micro-Collection',
+    shortDescription: 'Field collection of loan EMIs, recurring deposits, and daily pigmy with instant Bluetooth thermal receipt printing and SMS alerts.',
+    description: 'Facilitates doorstep collection of loan EMI installments, recurring deposits, and daily pigmy micro-savings directly from borrowers and merchants. Agents scan member QR codes, record cash payments, instantly print Bluetooth thermal paper receipts, and hold funds in digital Cash-in-Hand balance.',
+    roles: ['Field Agent', 'Branch Manager', 'Customer'], platforms: ['Field Agent App', 'Manager Dashboard'],
+    capabilities: [
+      'Doorstep cash collection for Loan EMIs, Recurring Deposits, and Pigmy accounts',
+      'Bluetooth thermal printer receipt generation and real-time SMS dispatch',
+      'QR code scanner for instant customer and loan account lookup',
+      'Real-time Cash-in-Hand wallet tracking with physical cash tally'
+    ],
+    workflow: [
+      { step: 1, title: 'Customer Account Lookup', description: 'Agent scans borrower QR code or searches member ID.' },
+      { step: 2, title: 'Collect Cash & Print Receipt', description: 'Collects cash repayment, records amount, and prints Bluetooth thermal receipt.' },
+      { step: 3, title: 'Cash-in-Hand Update', description: 'System updates agent Cash-in-Hand ledger and sends instant SMS receipt to member.' }
+    ],
+    businessValue: [
+      { title: 'Collection Velocity', description: 'Accelerates rural micro-loan and savings collections with 100% receipt transparency.' }
+    ],
+    videoUrl: '/videos/VAHT-Xq8NdY.mp4'
+  },
+  {
+    id: 'field-eod-collection-submission', number: '9.3', categorySlug: 'field-operations',
+    title: 'End-of-Day (EOD) Cash Handover & Branch Teller Reconciliation',
+    shortDescription: 'Agent cash-in-hand handover submission to branch cashier with secure 6-digit OTP verification and automatic GL posting.',
+    description: 'Manages the critical end-of-shift cash handover lifecycle. After collecting cash during doorstep visits, the agent holds funds as Cash-in-Hand. At branch closing, the agent selects payment records to submit, generating a secure 6-digit verification OTP. The branch cashier counts the physical cash, enters the OTP to verify, settling agent till balances, posting General Ledger (GL) entries (Debit Vault, Credit Accounts), and marking loan EMIs as paid.',
+    roles: ['Field Agent', 'Cashier', 'Branch Manager'], platforms: ['Field Agent App', 'Manager Dashboard'],
+    capabilities: [
+      'Agent handover initiation aggregating collected payment record IDs (POST /initiate)',
+      'Secure 6-digit verification OTP generation with configurable expiry',
+      'Branch cashier counter OTP verification and physical cash count clearance (POST /verify)',
+      'Automatic General Ledger (GL) posting (Debit: Vault/Cash, Credit: Customer/EMI/Deposit)',
+      'Real-time branch pending submissions query (GET /branch-pending)',
+      'Historical agent and branch reconciled audit trails (GET /agent-history, GET /branch-history)',
+      'One-tap OTP regeneration for cashier counter assistance (POST /regenerate-otp)'
+    ],
+    workflow: [
+      { step: 1, title: 'Agent Initiates Handover', description: 'Agent selects collected payment records in app; system aggregates cash and generates a 6-digit OTP.' },
+      { step: 2, title: 'Cashier Physical Count & OTP Verification', description: 'At branch counter, Cashier counts physical cash and inputs the OTP provided by the agent.' },
+      { step: 3, title: 'Reconciliation & GL Posting', description: 'System marks submission verified, posts GL entries (Debit Vault, Credit Accounts), and updates loan EMIs to Paid.' }
+    ],
+    businessValue: [
+      { title: 'Zero Till Variance', description: 'Guarantees dual-custody physical cash reconciliation and prevents collection leakage.' }
+    ],
+    videoUrl: '/videos/VAHT-Xq8NdY.mp4'
+  },
+  {
+    id: 'field-agent-collections-kpi', number: '9.4', categorySlug: 'field-operations',
     title: 'Field Agent GPS Tracking & Collection Route Optimization',
     shortDescription: 'Real-time GPS check-ins for field agents, daily collection target tracking, route optimization, and live agent location audit trails.',
     description: 'Monitors and optimizes field agent collection routes. Managers track live agent GPS check-ins, doorstep visit logs, daily collection target progress, and route maps in real time.',
@@ -698,10 +828,10 @@ const rawFeaturesData = [
   },
 
   // ==========================================
-  // MODULE 9: Branch Cashier Operations
+  // MODULE 10: Branch Cashier Operations
   // ==========================================
   {
-    id: 'branch-cashier-desk', number: '9.1', categorySlug: 'branch-cash-operations',
+    id: 'branch-cashier-desk', number: '10.1', categorySlug: 'branch-cash-operations',
     title: 'Branch Cashier Operations & Counter Liquidity',
     shortDescription: 'Managing physical cash counter liquidity, withdrawal code approvals, and cashier till count clearances.',
     description: 'Secures physical cash movement at branch counters and cashier drawers with withdrawal token verification and till balancing.',
@@ -717,7 +847,7 @@ const rawFeaturesData = [
     videoUrl: '/videos/VAHT-axQ83g.mp4'
   },
   {
-    id: 'branch-vault-balancing', number: '9.2', categorySlug: 'branch-cash-operations',
+    id: 'branch-vault-balancing', number: '10.2', categorySlug: 'branch-cash-operations',
     title: 'Main Vault Reconciliation & Cashier Till Audit',
     shortDescription: 'Reconciling main branch vault balance with daily cashier drawer tills and agent collection check-ins.',
     description: 'Manages physical vault balancing, dual-custody vault keys, and end-of-day teller reconciliation for branch counters.',
@@ -733,7 +863,7 @@ const rawFeaturesData = [
     videoUrl: '/videos/VAHT-axQ83g.mp4'
   },
   {
-    id: 'branch-agent-handover', number: '9.3', categorySlug: 'branch-cash-operations',
+    id: 'branch-agent-handover', number: '10.3', categorySlug: 'branch-cash-operations',
     title: 'Field Agent Cash Handover & Till Clearance',
     shortDescription: 'Verifying doorstep agent cash collections against thermal receipt logs and approving agent till clearances.',
     description: 'Verifies field agent cash handovers against digital receipt logs, approving agent till clearances before closing daily branch books.',
@@ -747,58 +877,6 @@ const rawFeaturesData = [
       { title: 'Agent Audit Trail', description: 'Provides immutable audit log of field agent cash handovers.' }
     ],
     videoUrl: '/videos/VAHT-axQ83g.mp4'
-  },
-
-  // ==========================================
-  // MODULE 10: Branch Management & Loan Verification
-  // ==========================================
-  {
-    id: 'mgr-loan-verification', number: '10.1', categorySlug: 'manager-branch-management',
-    title: 'First-Stage Loan Dossier Audit & Verification',
-    shortDescription: 'Branch Manager first-stage credit audit, income proof verification, and collateral document validation.',
-    description: 'Provides branch managers with tools to audit incoming loan dossiers, verify applicant income proofs, validate collateral property deeds, and forward dossiers for Chairman sanction.',
-    roles: ['Branch Manager'], platforms: ['Manager Dashboard'],
-    capabilities: ['Income document & bank statement audit tool', 'Collateral property deed verification', 'Credit score check & delinquency check', 'Forward for Chairman final sanction button'],
-    workflow: [
-      { step: 1, title: 'Review Loan Dossier', description: 'Manager inspects incoming customer application.' },
-      { step: 2, title: 'Verify Collateral & Income', description: 'Audits income proof and collateral valuation.' },
-      { step: 3, title: 'Forward to Chairman', description: 'Marks loan as verified and submits for executive sanction.' }
-    ],
-    businessValue: [
-      { title: 'First-Line Credit Quality', description: 'Prevents non-performing assets by enforcing thorough first-stage credit checks.' }
-    ],
-    videoUrl: '/videos/VAHT-UoLsO8.mp4'
-  },
-  {
-    id: 'mgr-compliance-flags', number: '10.2', categorySlug: 'manager-branch-management',
-    title: 'KYC Compliance Exception & Fraud Resolution',
-    shortDescription: 'Managing branch compliance flags, high-value transaction alerts, and document exception approvals.',
-    description: 'Allows branch managers to resolve KYC exceptions, review name-match warnings, and approve high-value withdrawal flags.',
-    roles: ['Branch Manager'], platforms: ['Manager Dashboard'],
-    capabilities: ['KYC exception approval queue', 'High-value transaction override authorization', 'Suspicious activity report (SAR) initiation'],
-    workflow: [
-      { step: 1, title: 'Receive Exception Alert', description: 'Manager notified of high-value withdrawal or KYC flag.' },
-      { step: 2, title: 'Investigate & Override', description: 'Inspects member history and authorizes transaction.' }
-    ],
-    businessValue: [
-      { title: 'Risk Oversight', description: 'Empowers local branch managers to control fraud risk and enforce KYC compliance.' }
-    ],
-    videoUrl: '/videos/VAHT-UoLsO8.mp4'
-  },
-  {
-    id: 'mgr-branch-metrics', number: '10.3', categorySlug: 'manager-branch-management',
-    title: 'Branch Performance Metrics & Field Agent Audits',
-    shortDescription: 'Supervising daily branch deposit growth, loan recovery rates, and field agent performance metrics.',
-    description: 'Delivers real-time operational BI dashboards for branch managers to monitor daily CASA deposit growth, loan recovery rates, and field agent performance.',
-    roles: ['Branch Manager'], platforms: ['Manager Dashboard'],
-    capabilities: ['Branch daily P&L and deposit balance graph', 'Field agent collection target vs actual matrix', 'Staff activity audit trail logs'],
-    workflow: [
-      { step: 1, title: 'Monitor Branch Dashboard', description: 'Manager reviews daily branch deposit and recovery KPIs.' }
-    ],
-    businessValue: [
-      { title: 'Operational Productivity', description: 'Drives branch operational performance and agent productivity.' }
-    ],
-    videoUrl: '/videos/VAHT-UoLsO8.mp4'
   },
 
   // ==========================================
@@ -968,7 +1046,7 @@ const defaultApiByFeatureId = {
     responsePayload: { success: true, ticketId: 'TCK-2026-4401', status: 'OPEN', slaHours: 24 },
     curl: `curl -X POST "https://api.fivopay.com/api/v1/support-ticket/create" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -d '{"subject": "Duplicate Passbook Request"}'`
   },
-  'pay-wallet-funding': {
+  'pay-saving-funding': {
     method: 'POST',
     endpoint: '/api/v1/deposit/deposit-funds',
     authRequired: true,
@@ -1013,7 +1091,7 @@ const defaultApiByFeatureId = {
     endpoint: '/api/v1/deposit/auto-sweep/reverse-sweep',
     authRequired: true,
     requestPayload: { userId: 'usr_65a4bc9e', requiredAmount: 7500 },
-    responsePayload: { success: true, sweptBackAmount: 10000, walletBalanceRestored: 27500.00 },
+    responsePayload: { success: true, sweptBackAmount: 10000, savingBalanceRestored: 27500.00 },
     curl: `curl -X POST "https://api.fivopay.com/api/v1/deposit/auto-sweep/reverse-sweep" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -d '{"requiredAmount": 7500}'`
   },
   'fdrd-origination': {
@@ -1029,7 +1107,7 @@ const defaultApiByFeatureId = {
     endpoint: '/api/v1/rd/close-maturity',
     authRequired: true,
     requestPayload: { rdAccountNo: 'RD-2026-77890' },
-    responsePayload: { success: true, totalMaturityPayout: 12565.00, creditedToWallet: 'JNSV-90812904' },
+    responsePayload: { success: true, totalMaturityPayout: 12565.00, creditedToSaving: 'JNSV-90812904' },
     curl: `curl -X POST "https://api.fivopay.com/api/v1/rd/close-maturity" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -d '{"rdAccountNo": "RD-2026-77890"}'`
   },
   'fdrd-pigmy-micro-deposits': {
@@ -1072,6 +1150,131 @@ const defaultApiByFeatureId = {
     responsePayload: { success: true, totalMembersCredited: 1420, totalDividendDisbursed: 710000 },
     curl: `curl -X POST "https://api.fivopay.com/api/v1/dividend/distribute-all" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -d '{"dividendPercentage": 10.0}'`
   },
+  // MODULE 7: Loan Origination, Underwriting, Gold Vault & Repayment Flow APIs
+  'loan-application-origination': {
+    method: 'POST',
+    endpoint: '/api/v1/loan/create-loan',
+    authRequired: true,
+    requestPayload: {
+      userId: 'usr_65a4bc9e',
+      productId: 'prod_gold_01',
+      principalAmount: 150000,
+      tenureMonths: 12,
+      repaymentFrequency: 'MONTHLY'
+    },
+    responsePayload: {
+      success: true,
+      loanId: 'LN-2026-004812',
+      estimatedEmi: 13083.50
+    },
+    curl: `curl -X POST "https://api.fivopay.com/api/v1/loan/create-loan" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -H "Content-Type: application/json" \\\n  -d '{"userId": "usr_65a4bc9e", "productId": "prod_gold_01", "principalAmount": 150000, "tenureMonths": 12, "repaymentFrequency": "MONTHLY"}'`
+  },
+  'loan-jlg-group': {
+    method: 'POST',
+    endpoint: '/api/v1/joint-liability/create-group',
+    authRequired: true,
+    requestPayload: {
+      groupName: 'Mahila Samriddhi JLG',
+      leaderUserId: 'usr_123',
+      memberUserIds: ['usr_1', 'usr_2', 'usr_3']
+    },
+    responsePayload: {
+      success: true,
+      groupId: 'JLG-2026-0091',
+      groupName: 'Mahila Samriddhi JLG',
+      status: 'ACTIVE',
+      memberCount: 4
+    },
+    curl: `curl -X POST "https://api.fivopay.com/api/v1/joint-liability/create-group" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -H "Content-Type: application/json" \\\n  -d '{"groupName": "Mahila Samriddhi JLG", "leaderUserId": "usr_123", "memberUserIds": ["usr_1", "usr_2", "usr_3"]}'`
+  },
+  'loan-underwriting-approval': {
+    method: 'PATCH',
+    endpoint: '/api/v1/loan/approve-loan/LN-2026-004812',
+    authRequired: true,
+    relatedEndpoints: [
+      { method: 'GET', endpoint: '/api/v1/loan/analyze/:id', description: 'AI Credit Scoring' },
+      { method: 'PATCH', endpoint: '/api/v1/loan/verify-loan/:id', description: 'Credit Officer Verification' },
+      { method: 'PATCH', endpoint: '/api/v1/loan/approve-loan/:id', description: 'Sanction loan amount & interest rate' },
+      { method: 'PATCH', endpoint: '/api/v1/loan/reject-loan/:id', description: 'Rejection with remarks' }
+    ],
+    requestPayload: {
+      approvedAmount: 150000,
+      approvedInterestRate: 9.0
+    },
+    responsePayload: {
+      success: true,
+      loanId: 'LN-2026-004812',
+      status: 'APPROVED',
+      approvedAmount: 150000,
+      approvedInterestRate: 9.0,
+      aiScore: 782
+    },
+    curl: `curl -X PATCH "https://api.fivopay.com/api/v1/loan/approve-loan/LN-2026-004812" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -H "Content-Type: application/json" \\\n  -d '{"approvedAmount": 150000, "approvedInterestRate": 9.0}'`
+  },
+  'loan-digital-esign': {
+    method: 'POST',
+    endpoint: '/api/v1/esign/generate-contract',
+    authRequired: true,
+    relatedEndpoints: [
+      { method: 'POST', endpoint: '/api/v1/esign/generate-contract', description: 'Generate digital loan contract' },
+      { method: 'POST', endpoint: '/api/v1/esign/submit-signature', description: 'Submit digital signature image/token' }
+    ],
+    requestPayload: {
+      loanId: 'LN-2026-004812'
+    },
+    responsePayload: {
+      success: true,
+      contractId: 'DOC-ESIGN-99120',
+      loanId: 'LN-2026-004812',
+      status: 'CONTRACT_GENERATED',
+      esignUrl: 'https://esign.fivopay.com/sign/LN-2026-004812'
+    },
+    curl: `curl -X POST "https://api.fivopay.com/api/v1/esign/generate-contract" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -H "Content-Type: application/json" \\\n  -d '{"loanId": "LN-2026-004812"}'`
+  },
+  'loan-cashier-disbursement': {
+    method: 'PATCH',
+    endpoint: '/api/v1/loan/allocate-cashier/LN-2026-004812',
+    authRequired: true,
+    relatedEndpoints: [
+      { method: 'PATCH', endpoint: '/api/v1/loan/allocate-cashier/:id', description: 'Allocate cashier desk' },
+      { method: 'PATCH', endpoint: '/api/v1/loan/disburse-loan/:id', description: 'Disburse cash or wallet credit' }
+    ],
+    requestPayload: {
+      cashierEmployeeId: 'emp_cashier_09'
+    },
+    responsePayload: {
+      success: true,
+      loanId: 'LN-2026-004812',
+      allocatedCashier: 'emp_cashier_09',
+      status: 'ALLOCATED_TO_CASHIER'
+    },
+    curl: `curl -X PATCH "https://api.fivopay.com/api/v1/loan/allocate-cashier/LN-2026-004812" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -H "Content-Type: application/json" \\\n  -d '{"cashierEmployeeId": "emp_cashier_09"}'`
+  },
+  'loan-emi-repayment': {
+    method: 'GET',
+    endpoint: '/api/v1/loan-emi/schedule/LN-2026-004812',
+    authRequired: true,
+    relatedEndpoints: [
+      { method: 'GET', endpoint: '/api/v1/loan-emi/schedule/:loanId', description: 'Get full EMI schedule' },
+      { method: 'POST', endpoint: '/api/v1/loan/user/pay-loan-wallet', description: 'Self-service wallet EMI payment' },
+      { method: 'POST', endpoint: '/api/v1/loan/user/create-loan-payment-order', description: 'Gateway Razorpay payment order' },
+      { method: 'POST', endpoint: '/api/v1/loan/user/verify-loan-payment', description: 'Gateway payment verification' },
+      { method: 'PATCH', endpoint: '/api/v1/loan/adjust-interest-rate/:id', description: 'Restructure EMI tenure/rate' },
+      { method: 'POST', endpoint: '/api/v1/loan-recovery/assign-agent', description: 'Overdue collection recovery assignment' }
+    ],
+    requestPayload: null,
+    responsePayload: {
+      success: true,
+      loanId: 'LN-2026-004812',
+      totalInstallments: 12,
+      paidInstallments: 0,
+      pendingAmount: 150000.00,
+      nextEmiDueDate: '2026-10-05',
+      nextEmiAmount: 13083.50
+    },
+    curl: `curl -X GET "https://api.fivopay.com/api/v1/loan-emi/schedule/LN-2026-004812" \\\n  -H "Authorization: Bearer <JWT_TOKEN>"`
+  },
+  // Legacy aliases
   'loan-flow-funnel': {
     method: 'POST',
     endpoint: '/api/v1/loan/create-loan',
@@ -1104,13 +1307,66 @@ const defaultApiByFeatureId = {
     responsePayload: { success: true, loanId: 'LN-2026-004812', totalInstallments: 12, monthlyBreakup: [{ month: 1, principal: 11958.50, interest: 1125.00, balance: 138041.50 }] },
     curl: `curl -X GET "https://api.fivopay.com/api/v1/loan/amortization-schedule/LN-2026-004812" \\\n  -H "Authorization: Bearer <JWT_TOKEN>"`
   },
+  'field-doorstep-onboarding': {
+    method: 'POST',
+    endpoint: '/api/v1/agent/onboarding/offline-sync',
+    authRequired: true,
+    requestPayload: {
+      agentId: 'agt_9912',
+      customerData: {
+        fullName: 'Sunita Devi',
+        phone: '9876543210',
+        documentType: 'AADHAAR',
+        documentNumber: 'XXXX-XXXX-4512'
+      },
+      offlineCapturedAt: '2026-09-22T10:15:00Z'
+    },
+    responsePayload: {
+      success: true,
+      memberId: 'FIVO-MBR-2026-0994',
+      kycStatus: 'VERIFIED',
+      syncedCount: 1
+    },
+    curl: `curl -X POST "https://api.fivopay.com/api/v1/agent/onboarding/offline-sync" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -H "Content-Type: application/json" \\\n  -d '{"agentId": "agt_9912", "customerData": {"fullName": "Sunita Devi"}}'`
+  },
   'field-doorstep-collections': {
     method: 'POST',
     endpoint: '/api/v1/agent/collection/collect-cash',
     authRequired: true,
-    requestPayload: { customerId: 'usr_65a4bc9e', loanId: 'LN-2026-004812', amount: 2500 },
-    responsePayload: { success: true, collectionId: 'COL-99012', receiptNumber: 'RCP-2026-7781', smsDispatched: true },
-    curl: `curl -X POST "https://api.fivopay.com/api/v1/agent/collection/collect-cash" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -d '{"amount": 2500}'`
+    requestPayload: { customerId: 'usr_65a4bc9e', loanId: 'LN-2026-004812', amount: 2500, collectionType: 'LOAN_EMI' },
+    responsePayload: { success: true, paymentRecordId: '6650a1b2c3d4e5f6a7b8c9d0', receiptNumber: 'RCP-2026-7781', cashInHandBalance: 7500.00, smsDispatched: true },
+    curl: `curl -X POST "https://api.fivopay.com/api/v1/agent/collection/collect-cash" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -H "Content-Type: application/json" \\\n  -d '{"customerId": "usr_65a4bc9e", "loanId": "LN-2026-004812", "amount": 2500}'`
+  },
+  'field-eod-collection-submission': {
+    method: 'POST',
+    endpoint: '/api/v1/agent/collection-submission/initiate',
+    authRequired: true,
+    relatedEndpoints: [
+      { method: 'POST', endpoint: '/api/v1/agent/collection-submission/initiate', description: 'Agent initiates handover with payment IDs' },
+      { method: 'POST', endpoint: '/api/v1/agent/collection-submission/verify', description: 'Cashier counts physical cash and inputs OTP' },
+      { method: 'GET', endpoint: '/api/v1/agent/collection-submission/branch-pending', description: 'Cashier pending submissions queue' },
+      { method: 'GET', endpoint: '/api/v1/agent/collection-submission/agent-history', description: 'Agent historical submission records' },
+      { method: 'GET', endpoint: '/api/v1/agent/collection-submission/branch-history', description: 'Branch reconciled audit log' },
+      { method: 'POST', endpoint: '/api/v1/agent/collection-submission/regenerate-otp', description: 'Regenerate handover OTP' }
+    ],
+    requestPayload: {
+      paymentRecordIds: [
+        "6650a1b2c3d4e5f6a7b8c9d0",
+        "6650a1b2c3d4e5f6a7b8c9d1"
+      ]
+    },
+    responsePayload: {
+      success: true,
+      message: "Submission initiated successfully",
+      data: {
+        _id: "sub_987654",
+        totalAmount: 7500,
+        otp: "482910",
+        otpExpiry: "2026-09-23T17:30:00.000Z",
+        status: "pending"
+      }
+    },
+    curl: `curl -X POST "https://api.fivopay.com/api/v1/agent/collection-submission/initiate" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -H "Content-Type: application/json" \\\n  -d '{"paymentRecordIds": ["6650a1b2c3d4e5f6a7b8c9d0", "6650a1b2c3d4e5f6a7b8c9d1"]}'`
   },
   'field-agent-collections-kpi': {
     method: 'POST',
@@ -1138,35 +1394,22 @@ const defaultApiByFeatureId = {
   },
   'branch-agent-handover': {
     method: 'POST',
-    endpoint: '/api/v1/treasury/agent-handover',
+    endpoint: '/api/v1/agent/collection-submission/verify',
     authRequired: true,
-    requestPayload: { agentId: 'agt_9912', cashHandoverAmount: 18500.00 },
-    responsePayload: { success: true, handoverRef: 'HND-2026-9901', agentTillCleared: true },
-    curl: `curl -X POST "https://api.fivopay.com/api/v1/treasury/agent-handover" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -d '{"cashHandoverAmount": 18500}'`
-  },
-  'mgr-loan-verification': {
-    method: 'PATCH',
-    endpoint: '/api/v1/manager/loan/verify/LN-2026-004812',
-    authRequired: true,
-    requestPayload: { verificationStatus: 'VERIFIED', managerNotes: 'Income proof and collateral verified.' },
-    responsePayload: { success: true, status: 'VERIFIED_FORWARDED_CHAIRMAN' },
-    curl: `curl -X PATCH "https://api.fivopay.com/api/v1/manager/loan/verify/LN-2026-004812" \\\n  -H "Authorization: Bearer <JWT_TOKEN>"`
-  },
-  'mgr-compliance-flags': {
-    method: 'POST',
-    endpoint: '/api/v1/manager/compliance/override',
-    authRequired: true,
-    requestPayload: { flagId: 'FLG-KYC-9901', overrideReason: 'Manual physical passport verified by branch manager' },
-    responsePayload: { success: true, flagStatus: 'RESOLVED_OVERRIDDEN' },
-    curl: `curl -X POST "https://api.fivopay.com/api/v1/manager/compliance/override" \\\n  -H "Authorization: Bearer <JWT_TOKEN>"`
-  },
-  'mgr-branch-metrics': {
-    method: 'GET',
-    endpoint: '/api/v1/manager/branch-kpis/brn_001',
-    authRequired: true,
-    requestPayload: null,
-    responsePayload: { success: true, totalBranchDeposits: 18500000, totalActiveLoans: 42, collectionRatePercentage: 98.2 },
-    curl: `curl -X GET "https://api.fivopay.com/api/v1/manager/branch-kpis/brn_001" \\\n  -H "Authorization: Bearer <JWT_TOKEN>"`
+    relatedEndpoints: [
+      { method: 'POST', endpoint: '/api/v1/agent/collection-submission/verify', description: 'Cashier counts physical cash and inputs OTP' },
+      { method: 'GET', endpoint: '/api/v1/agent/collection-submission/branch-pending', description: 'Pending agent collection submissions' },
+      { method: 'POST', endpoint: '/api/v1/treasury/agent-handover', description: 'Till balance clearance' }
+    ],
+    requestPayload: {
+      submissionId: 'sub_987654',
+      otp: '482910'
+    },
+    responsePayload: {
+      success: true,
+      message: 'Collection submission verified successfully'
+    },
+    curl: `curl -X POST "https://api.fivopay.com/api/v1/agent/collection-submission/verify" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -H "Content-Type: application/json" \\\n  -d '{"submissionId": "sub_987654", "otp": "482910"}'`
   },
   'ai-wealth-advisor': {
     method: 'POST',

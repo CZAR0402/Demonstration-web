@@ -8,7 +8,9 @@ import LeadsScreen from './pages/LeadsScreen';
 import LeadDetailScreen from './pages/LeadDetailScreen';
 import PipelineScreen from './pages/PipelineScreen';
 import CampaignsScreen from './pages/CampaignsScreen';
+import PastCampaignsScreen from './pages/PastCampaignsScreen';
 import TeamManagementScreen from './pages/TeamManagementScreen';
+import AdminCampaignsScreen from './pages/AdminCampaignsScreen';
 import ProductFeaturesLanding from './pages/ProductFeaturesLanding';
 import CategoryDetailPage from './pages/CategoryDetailPage';
 import FeatureDetailPage from './pages/FeatureDetailPage';
@@ -51,8 +53,25 @@ function App() {
     }
   };
 
+  // Load user-scoped campaigns from backend when logged in
+  const fetchBackendCampaigns = async () => {
+    if (!isLoggedIn) return;
+    try {
+      const res = await api.getCampaigns();
+      if (res && res.data) {
+        setCampaigns(res.data);
+      } else {
+        setCampaigns([]);
+      }
+    } catch (err) {
+      console.warn('[App] Could not fetch backend campaigns:', err.message);
+      setCampaigns([]);
+    }
+  };
+
   useEffect(() => {
     fetchBackendLeads();
+    fetchBackendCampaigns();
   }, [isLoggedIn, currentUser]);
 
   // Toggle Theme & Persist Preference
@@ -93,6 +112,7 @@ function App() {
     setIsLoggedIn(true);
     setCurrentUser(userProfile);
     fetchBackendLeads();
+    fetchBackendCampaigns();
   };
 
   const handleLogout = () => {
@@ -101,6 +121,7 @@ function App() {
     setIsLoggedIn(false);
     setCurrentUser(null);
     setSelectedLeadId(null);
+    setCampaigns([]);
   };
 
   const [returnTab, setReturnTab] = useState('leads');
@@ -135,7 +156,7 @@ function App() {
 
       {/* Main Workspace */}
       <main className="main-content">
-        {!isProductFeaturesRoute && activeTab !== 'lead-detail' && activeTab !== 'team' && (
+        {!isProductFeaturesRoute && activeTab !== 'lead-detail' && activeTab !== 'team' && activeTab !== 'all-campaigns' && (
           <>
             <header className="top-bar">
               <div className="page-title">
@@ -187,6 +208,10 @@ function App() {
                 <TeamManagementScreen />
               )}
 
+              {activeTab === 'all-campaigns' && currentUser?.role === 'ADMIN' && (
+                <AdminCampaignsScreen />
+              )}
+
               {activeTab === 'lead-detail' && (
                 <LeadDetailScreen 
                   leadId={selectedLeadId}
@@ -212,6 +237,15 @@ function App() {
                 <CampaignsScreen 
                   campaigns={campaigns}
                   setCampaigns={setCampaigns}
+                  onViewPastCampaigns={() => setActiveTab('past-campaigns')}
+                />
+              )}
+
+              {activeTab === 'past-campaigns' && currentUser?.role !== 'ADMIN' && (
+                <PastCampaignsScreen 
+                  campaigns={campaigns}
+                  setCampaigns={setCampaigns}
+                  onComposeNew={() => setActiveTab('campaigns')}
                 />
               )}
             </>

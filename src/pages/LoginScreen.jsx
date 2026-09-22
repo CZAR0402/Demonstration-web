@@ -8,54 +8,27 @@ function LoginScreen({ onLoginSuccess }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = (loginEmail, loginPassword) => {
+  const handleLogin = async (loginEmail, loginPassword) => {
     setLoading(true);
     setError('');
 
     const cleanEmail = (loginEmail || '').trim().toLowerCase();
     const cleanPassword = (loginPassword || '').trim();
 
-    // 1. Sales Guy Login (bde@fivopay.com / bde@123)
-    if (cleanEmail === 'bde@fivopay.com' && cleanPassword === 'bde@123') {
-      const salesUser = {
-        id: 'bde-sales-executive-01',
-        _id: 'bde-sales-executive-01',
-        name: 'Sales Executive (BDE)',
-        email: 'bde@fivopay.com',
-        role: 'SALES',
-        title: 'Senior Sales Executive (BDE)',
-        region: 'Mumbai & Western Maharashtra'
-      };
-      const token = 'fivopay_sales_token_bde';
-      localStorage.setItem('fivopay_token', token);
-      localStorage.setItem('fivopay_user', JSON.stringify(salesUser));
+    try {
+      const res = await api.login(cleanEmail, cleanPassword);
+      if (res && res.user && res.token) {
+        localStorage.setItem('fivopay_token', res.token);
+        localStorage.setItem('fivopay_user', JSON.stringify(res.user));
+        setLoading(false);
+        onLoginSuccess(res.user);
+        return;
+      }
+      throw new Error(res?.message || 'Login failed. Please check your credentials.');
+    } catch (err) {
       setLoading(false);
-      onLoginSuccess(salesUser);
-      return;
+      setError(err.message || 'Invalid email or password.');
     }
-
-    // 2. Admin Manager Login (admin@fivopay.com / password123)
-    if (cleanEmail === 'admin@fivopay.com' && cleanPassword === 'password123') {
-      const adminUser = {
-        id: 'admin-manager-01',
-        _id: 'admin-manager-01',
-        name: 'Admin Manager',
-        email: 'admin@fivopay.com',
-        role: 'ADMIN',
-        title: 'Head of Sales Governance',
-        region: 'Corporate HQ'
-      };
-      const token = 'fivopay_admin_token_admin';
-      localStorage.setItem('fivopay_token', token);
-      localStorage.setItem('fivopay_user', JSON.stringify(adminUser));
-      setLoading(false);
-      onLoginSuccess(adminUser);
-      return;
-    }
-
-    // Invalid credentials
-    setLoading(false);
-    setError('Invalid email or password. To login as Sales Guy, use bde@fivopay.com and password bde@123');
   };
 
   const handleSubmit = (e) => {

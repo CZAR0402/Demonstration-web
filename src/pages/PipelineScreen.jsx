@@ -193,6 +193,9 @@ function PipelineScreen({ leads, setLeads, onViewLead, setSelectedLeadId, setAct
     }
   };
 
+  const isAdmin = currentUser?.role === 'ADMIN';
+  const accessibleLeads = isAdmin ? leads : leads.filter(l => l.assignedTo && l.assignedToName !== 'Unassigned');
+
   return (
     <div className="content-card" style={{ padding: '1.25rem' }}>
       {/* Title Bar with Horizontal Slider Controls */}
@@ -238,7 +241,7 @@ function PipelineScreen({ leads, setLeads, onViewLead, setSelectedLeadId, setAct
       >
         <div className="kanban-board" ref={boardRef}>
           {stages.map(stage => {
-            const stageLeads = leads.filter(l => l.stage === stage);
+            const stageLeads = accessibleLeads.filter(l => l.stage === stage);
             const isOver = activeOverStage === stage;
 
             return (

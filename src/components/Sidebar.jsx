@@ -4,7 +4,7 @@ import {
   Users, BarChart3, Mail, LogOut, Sun, Moon, Shield, Settings, MonitorPlay, 
   ChevronDown, ChevronRight, UserCheck, Smartphone, ArrowLeftRight, Landmark, 
   PiggyBank, Zap, Lock, PieChart, Briefcase, Footprints, Banknote, Building2, 
-  ShieldAlert, Receipt, Brain, ShieldCheck, Layers, Calculator
+  ShieldAlert, Receipt, Brain, ShieldCheck, Layers, Calculator, History, Send
 } from 'lucide-react';
 import { productCategories, moduleGroups } from '../data/productFeaturesData';
 
@@ -117,18 +117,32 @@ function Sidebar({ activeTab, setActiveTab, onLogout, theme, setTheme, currentUs
               </button>
             </li>
             {isAdmin && (
-              <li>
-                <button 
-                  className={`nav-item ${activeTab === 'team' && !isProductFeaturesActive ? 'active' : ''}`} 
-                  style={{ background: 'none', border: 'none', width: '100%', font: 'inherit', textAlign: 'left' }}
-                  onClick={() => {
-                    setActiveTab('team');
-                    navigate('/');
-                  }}
-                >
-                  <Shield size={16} style={{ color: 'var(--accent)' }} /> Team & Sales BDEs
-                </button>
-              </li>
+              <>
+                <li>
+                  <button 
+                    className={`nav-item ${activeTab === 'team' && !isProductFeaturesActive ? 'active' : ''}`} 
+                    style={{ background: 'none', border: 'none', width: '100%', font: 'inherit', textAlign: 'left' }}
+                    onClick={() => {
+                      setActiveTab('team');
+                      navigate('/');
+                    }}
+                  >
+                    <Shield size={16} style={{ color: 'var(--accent)' }} /> Team & Sales BDEs
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    className={`nav-item ${activeTab === 'all-campaigns' && !isProductFeaturesActive ? 'active' : ''}`} 
+                    style={{ background: 'none', border: 'none', width: '100%', font: 'inherit', textAlign: 'left' }}
+                    onClick={() => {
+                      setActiveTab('all-campaigns');
+                      navigate('/');
+                    }}
+                  >
+                    <Send size={16} style={{ color: '#ec4899' }} /> All Email Campaigns
+                  </button>
+                </li>
+              </>
             )}
             {!isAdmin && (
               <>
@@ -154,6 +168,18 @@ function Sidebar({ activeTab, setActiveTab, onLogout, theme, setTheme, currentUs
                     }}
                   >
                     <Mail size={16} /> AWS SES Campaigns
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    className={`nav-item ${activeTab === 'past-campaigns' && !isProductFeaturesActive ? 'active' : ''}`} 
+                    style={{ background: 'none', border: 'none', width: '100%', font: 'inherit', textAlign: 'left' }}
+                    onClick={() => {
+                      setActiveTab('past-campaigns');
+                      navigate('/');
+                    }}
+                  >
+                    <History size={16} /> Past Campaigns
                   </button>
                 </li>
               </>

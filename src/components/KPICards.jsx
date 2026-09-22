@@ -2,11 +2,12 @@ import React from 'react';
 import { Users, Calendar, Send, TrendingUp, Trophy, CheckCircle2 } from 'lucide-react';
 
 function KPICards({ leads, campaigns, currentUser }) {
-  const totalLeads = leads.length;
-  const demoScheduled = leads.filter(l => l.stage === 'Demo Scheduled').length;
-  const wonLeads = leads.filter(l => l.stage === 'Won').length;
-  const emailsSent = campaigns.reduce((acc, c) => acc + (c.sentCount || 0), 0);
   const isAdmin = currentUser?.role === 'ADMIN';
+  const accessibleLeads = isAdmin ? leads : leads.filter(l => l.assignedTo && l.assignedToName !== 'Unassigned');
+  const totalLeads = accessibleLeads.length;
+  const demoScheduled = accessibleLeads.filter(l => l.stage === 'Demo Scheduled').length;
+  const wonLeads = accessibleLeads.filter(l => l.stage === 'Won').length;
+  const emailsSent = campaigns.reduce((acc, c) => acc + (c.sentCount || 0), 0);
   const winRate = totalLeads > 0 ? Math.round((wonLeads / totalLeads) * 100) : 0;
 
   return (
