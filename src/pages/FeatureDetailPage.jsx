@@ -107,20 +107,16 @@ function FeatureDetailPage() {
         </div>
 
         {/* Action Button: Watch Feature Video */}
-        <div className="hero-actions-row">
-          {feature.videoUrl ? (
+        {feature.videoUrl && (
+          <div className="hero-actions-row">
             <button 
               className="watch-video-btn-hero"
               onClick={() => setIsVideoModalOpen(true)}
             >
               <PlayCircle size={18} /> Watch Feature Video
             </button>
-          ) : (
-            <div className="video-coming-soon-pill">
-              <PlayCircle size={16} /> Feature walkthrough video coming soon
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* 3. Feature Overview (2-Column: What it does & Key capabilities) */}
@@ -209,13 +205,15 @@ function FeatureDetailPage() {
       </div>
 
       {/* 7. Video Walkthrough Player Section */}
-      <div className="feature-section-block">
-        <VideoPlayer 
-          videoUrl={feature.videoUrl} 
-          title={feature.title} 
-          onOpenModal={() => setIsVideoModalOpen(true)} 
-        />
-      </div>
+      {feature.videoUrl && (
+        <div className="feature-section-block">
+          <VideoPlayer 
+            videoUrl={feature.videoUrl} 
+            title={feature.title} 
+            onOpenModal={() => setIsVideoModalOpen(true)} 
+          />
+        </div>
+      )}
 
       {/* 8. Related Features */}
       {relatedFeatures.length > 0 && (

@@ -148,15 +148,30 @@ export const productCategories = [
     group: 'Operations',
     icon: 'Banknote',
     videoUrl: '/videos/VAHT-axQ83g.mp4',
-    shortDescription: 'Managing counter liquidity, withdrawal code approvals, cashier drawer balancing, field agent cash check-ins, and vault reconciliation.',
+    shortDescription: 'Managing counter liquidity, OTC deposits & withdrawals, 4-digit code pickup, agent settlement, loan disbursements, and EOD cash drawer balancing.',
     purpose: 'Secures physical cash movement at branch counter desks, cashier drawers, and main vault balances with dual-auth code verification and teller reconciliation.',
-    primaryUsers: ['Cashier', 'Branch Manager'],
+    primaryUsers: ['Cashier', 'Branch Manager', 'Admin'],
     businessValue: 'Ensures zero cash mismatch, audit-proof vault balancing, and seamless multi-level teller reconciliation.',
-    featureCount: 3
+    featureCount: 7
+  },
+  {
+    id: 'branch-manager-governance',
+    number: 11,
+    slideNumber: '13 / 16',
+    slug: 'branch-manager-governance',
+    name: 'Branch Manager & Governance Hub',
+    group: 'Governance',
+    icon: 'Building2',
+    videoUrl: null,
+    shortDescription: 'Comprehensive supervisory console for branch heads, covering credit governance, staffing, cash logistics, and branch-scoped analytics.',
+    purpose: 'Empowers branch managers with full supervisory controls over loan sanctions, staff provisioning, agent cash logistics, vault reserves, and regulatory compliance.',
+    primaryUsers: ['Branch Manager', 'Admin'],
+    businessValue: 'Ensures strict branch data isolation, accelerates credit approvals, coordinates field logistics, and guarantees 100% audit readiness.',
+    featureCount: 8
   },
   {
     id: 'ai-intelligent-automation',
-    number: 11,
+    number: 12,
     slideNumber: '09 / 16',
     slug: 'ai-intelligent-automation',
     name: 'AI Advisor & Intelligent Automation',
@@ -171,7 +186,7 @@ export const productCategories = [
   },
   {
     id: 'executive-governance-analytics',
-    number: 12,
+    number: 13,
     slideNumber: '14 & 16 / 16',
     slug: 'executive-governance-analytics',
     name: 'Executive Governance, Accounting & Analytics',
@@ -191,7 +206,7 @@ export const moduleGroups = [
   { name: 'Lending', categorySlugs: ['loan-credit-lifecycle', 'loan-interest-calculator'] },
   { name: 'Operations', categorySlugs: ['field-operations', 'branch-cash-operations'] },
   { name: 'Intelligence', categorySlugs: ['ai-intelligent-automation'] },
-  { name: 'Governance', categorySlugs: ['executive-governance-analytics'] }
+  { name: 'Governance', categorySlugs: ['branch-manager-governance', 'executive-governance-analytics'] }
 ];
 
 // Raw detailed features data
@@ -831,59 +846,352 @@ const rawFeaturesData = [
   // MODULE 10: Branch Cashier Operations
   // ==========================================
   {
-    id: 'branch-cashier-desk', number: '10.1', categorySlug: 'branch-cash-operations',
-    title: 'Branch Cashier Operations & Counter Liquidity',
-    shortDescription: 'Managing physical cash counter liquidity, withdrawal code approvals, and cashier till count clearances.',
-    description: 'Secures physical cash movement at branch counters and cashier drawers with withdrawal token verification and till balancing.',
-    roles: ['Cashier', 'Branch Manager'], platforms: ['Manager Dashboard'],
-    capabilities: ['Secure withdrawal code verification & cash dispensing', 'Cashier drawer till balance auditing against digital transaction logs', 'Physical cash count verification'],
+    id: 'branch-otc-deposit', number: '10.1', categorySlug: 'branch-cash-operations',
+    title: 'Over-The-Counter (OTC) Cash Deposit',
+    shortDescription: 'Walk-in customer cash deposit at branch counter with instant balance credit and GL journal posting.',
+    description: 'Allows walk-in customers to deposit physical cash directly into their Savings/Current accounts at the branch counter. The cashier searches customer records, validates identity, counts physical cash, and executes instant account credit while updating the counter cash drawer and General Ledger (GL).',
+    roles: ['Cashier', 'Branch Manager', 'Admin'], platforms: ['Manager Dashboard'],
+    capabilities: [
+      'Counter cash deposit processing for walk-in account holders (POST /deposit/cashier-deposit)',
+      'Instant account balance credit (accountBalance) with physical cash receipt generation',
+      'Counter cash drawer till increment tracking in real time',
+      'Automated General Ledger (GL) journal entry posting categorized as branch_deposit'
+    ],
     workflow: [
-      { step: 1, title: 'Verify Withdrawal Code', description: 'Customer presents 6-digit withdrawal code.' },
-      { step: 2, title: 'Dispense Cash', description: 'Cashier verifies code, dispenses cash, and updates drawer balance.' }
+      { step: 1, title: 'Customer Identification', description: 'Customer presents cash and Account/Customer ID or phone at counter.' },
+      { step: 2, title: 'Cash Count & Verification', description: 'Cashier validates identity, verifies physical currency notes, and enters deposit amount.' },
+      { step: 3, title: 'Instant Credit & Receipt', description: 'System credits balance, updates drawer cash balance, and logs branch_deposit transaction.' }
     ],
     businessValue: [
-      { title: 'Zero Cash Discrepancy', description: 'Ensures zero cash mismatch at branch counter desks.' }
+      { title: 'Instant Liquidity Inflow', description: 'Provides zero-delay deposit processing for branch walk-ins with real-time audit logs.' }
     ],
     videoUrl: '/videos/VAHT-axQ83g.mp4'
   },
   {
-    id: 'branch-vault-balancing', number: '10.2', categorySlug: 'branch-cash-operations',
-    title: 'Main Vault Reconciliation & Cashier Till Audit',
-    shortDescription: 'Reconciling main branch vault balance with daily cashier drawer tills and agent collection check-ins.',
-    description: 'Manages physical vault balancing, dual-custody vault keys, and end-of-day teller reconciliation for branch counters.',
-    roles: ['Cashier', 'Branch Manager'], platforms: ['Manager Dashboard'],
-    capabilities: ['Dual-custody vault key verification', 'End-of-day cashier till balancing', 'Field agent cash deposit check-in'],
+    id: 'branch-otc-withdrawal', number: '10.2', categorySlug: 'branch-cash-operations',
+    title: 'Over-The-Counter (OTC) Cash Withdrawal',
+    shortDescription: 'Immediate counter cash payout to walk-in customers with limit checks and cash drawer debit.',
+    description: 'Enables immediate counter cash payouts to walk-in customers without prior mobile booking. The cashier validates identity, verifies available account balance and daily withdrawal threshold limits, debits the account as branch_withdrawal, and dispenses physical cash from the counter drawer.',
+    roles: ['Cashier', 'Branch Manager', 'Admin'], platforms: ['Manager Dashboard'],
+    capabilities: [
+      'Immediate counter cash withdrawal execution for walk-in members (POST /deposit/cashier-withdrawal)',
+      'Real-time available balance and daily cash withdrawal limit checks',
+      'Automated counter cash drawer till deduction',
+      'Transaction categorization as branch_withdrawal with instant member SMS notification'
+    ],
     workflow: [
-      { step: 1, title: 'Agent Cash Check-in', description: 'Field agent deposits daily cash collections at cashier desk.' },
-      { step: 2, title: 'Vault Transfer', description: 'Surplus cashier till cash transferred to main branch vault.' }
+      { step: 1, title: 'Request & Balance Verification', description: 'Customer requests counter withdrawal; cashier verifies identity, balance, and daily limits.' },
+      { step: 2, title: 'Account Debit', description: 'Cashier enters amount; system debits customer account and logs branch_withdrawal debit.' },
+      { step: 3, title: 'Cash Payout', description: 'Physical cash is dispensed from drawer to customer and printed receipt is issued.' }
     ],
     businessValue: [
-      { title: 'Vault Security', description: 'Guarantees audit-proof vault balancing and daily teller reconciliation.' }
+      { title: 'Counter Liquidity Governance', description: 'Ensures strict adherence to KYC and withdrawal limits while maintaining accurate drawer logs.' }
     ],
     videoUrl: '/videos/VAHT-axQ83g.mp4'
   },
   {
-    id: 'branch-agent-handover', number: '10.3', categorySlug: 'branch-cash-operations',
-    title: 'Field Agent Cash Handover & Till Clearance',
-    shortDescription: 'Verifying doorstep agent cash collections against thermal receipt logs and approving agent till clearances.',
-    description: 'Verifies field agent cash handovers against digital receipt logs, approving agent till clearances before closing daily branch books.',
-    roles: ['Cashier', 'Branch Manager'], platforms: ['Manager Dashboard'],
-    capabilities: ['Agent thermal receipt log matching', 'Instant agent cash handover clearance', 'Audit trail log entry'],
+    id: 'branch-code-cash-pickup', number: '10.3', categorySlug: 'branch-cash-operations',
+    title: 'In-Branch Cash Pickup via 4-Digit Request Code',
+    shortDescription: 'Pre-booked app cash withdrawals dispensed at counter via secure 4-digit token code.',
+    description: 'Processes pre-booked cash withdrawals initiated on customer mobile banking apps. When a customer locks a withdrawal amount in-app, a secure 4-digit code is generated. At the counter, the cashier validates the code against the branch queue, checks balance lock, and dispenses physical cash.',
+    roles: ['Cashier', 'Customer', 'Branch Manager'], platforms: ['Manager Dashboard', 'Customer Mobile App'],
+    capabilities: [
+      'Branch withdrawal queue inspection (GET /cash-withdrawal/cashier/requests)',
+      '4-digit code validation & instant cash dispensing (PATCH /cash-withdrawal/cashier/complete-by-code)',
+      'Withdrawal request status management & cancellation (PATCH /cash-withdrawal/cashier/request/:requestId/status)',
+      'Automated code invalidation upon payout to prevent double-dispensing'
+    ],
     workflow: [
-      { step: 1, title: 'Handover Verification', description: 'Cashier counts agent physical cash against app receipt log.' },
-      { step: 2, title: 'Clear Agent Till', description: 'Marks agent daily collection cleared on system.' }
+      { step: 1, title: 'Mobile Booking', description: 'Customer initiates withdrawal in app; system locks funds and generates 4-digit code (e.g. 4819).' },
+      { step: 2, title: 'Present Code at Counter', description: 'Customer visits branch counter and provides the 4-digit code to the cashier.' },
+      { step: 3, title: 'Verify & Dispense', description: 'Cashier submits code; system validates branch lock, marks request completed, and cashier dispenses cash.' }
     ],
     businessValue: [
-      { title: 'Agent Audit Trail', description: 'Provides immutable audit log of field agent cash handovers.' }
+      { title: 'Sub-30-Second Turnaround', description: 'Reduces counter teller processing time to under 30 seconds per cash withdrawal.' }
+    ],
+    videoUrl: '/videos/VAHT-axQ83g.mp4'
+  },
+  {
+    id: 'branch-agent-settlement', number: '10.4', categorySlug: 'branch-cash-operations',
+    title: 'Field Agent Cash Handover & Settlement',
+    shortDescription: 'Verifying doorstep agent cash collections via OTP approval and clearing agent till liabilities.',
+    description: 'Processes end-of-shift field agent cash collection handovers at branch counter desks. Field agents submit collected loan EMIs, RD/Pigmy, and share capital records, generating a 6-digit OTP. The cashier counts the physical cash, enters the OTP to verify, clearing the agent\'s liability and crediting the branch vault.',
+    roles: ['Cashier', 'Field Agent', 'Branch Manager'], platforms: ['Manager Dashboard'],
+    capabilities: [
+      'Pending agent collection submission queue review (GET /agent/collection-submission/branch-pending)',
+      '6-digit OTP physical cash verification and acceptance (POST /agent/collection-submission/verify)',
+      'Expired OTP regeneration support at counter desk (POST /agent/collection-submission/regenerate-otp)',
+      'Branch reconciled historical audit logging (GET /agent/collection-submission/branch-history)'
+    ],
+    workflow: [
+      { step: 1, title: 'View Pending Queue', description: 'Cashier opens pending agent submission list and itemized receipts.' },
+      { step: 2, title: 'Physical Count & Enter OTP', description: 'Cashier counts physical cash and inputs agent\'s 6-digit OTP.' },
+      { step: 3, title: 'Clear Liability & Post GL', description: 'System marks all records VERIFIED, clears agent liability, and credits branch cash drawer.' }
+    ],
+    businessValue: [
+      { title: 'Dual-Custody Cash Audit', description: 'Ensures 100% auditable handover between field agents and branch cashiers.' }
+    ],
+    videoUrl: '/videos/VAHT-axQ83g.mp4'
+  },
+  {
+    id: 'branch-loan-disbursement', number: '10.5', categorySlug: 'branch-cash-operations',
+    title: 'Counter Loan Cash Disbursement Execution',
+    shortDescription: 'Cash payout of approved loans with cashier desk segregation of duties and EMI schedule activation.',
+    description: 'Executes physical counter cash disbursement for approved loans allocated to the cashier. Enforces strict segregation of duties where only the designated cashier can disburse sanctioned funds. Upon payout confirmation, the loan status transitions to disbursed and the repayment EMI schedule is activated.',
+    roles: ['Cashier', 'Branch Manager', 'Admin'], platforms: ['Manager Dashboard'],
+    capabilities: [
+      'Assigned pending loans queue retrieval (GET /loan/get-all-loans?approvalStatus=approved)',
+      'Disbursed loan historical record query (GET /loan/get-all-loans?approvalStatus=disbursed)',
+      'Cashier allocation control (PATCH /loan/allocate-cashier/:id)',
+      'Direct loan cash disbursement execution (PATCH /loan/disburse-loan/:id)',
+      'Automatic EMI amortization schedule activation on core ledger'
+    ],
+    workflow: [
+      { step: 1, title: 'Cashier Allocation', description: 'Manager allocates approved loan to specific cashier desk.' },
+      { step: 2, title: 'KYC & Document Verification', description: 'Cashier inspects borrower identity documents at counter.' },
+      { step: 3, title: 'Execute Disbursal', description: 'Cashier confirms disbursement; loan status transitions to disbursed and cash is handed over.' }
+    ],
+    businessValue: [
+      { title: 'Segregation of Duties', description: 'Guarantees that credit sanctioners cannot disburse funds, preventing internal collusion.' }
+    ],
+    videoUrl: '/videos/VAHT-axQ83g.mp4'
+  },
+  {
+    id: 'branch-daily-balancing', number: '10.6', categorySlug: 'branch-cash-operations',
+    title: 'Daily Cash Balancing, Vault & Reconciliation',
+    shortDescription: 'End-of-day teller cash drawer balancing, accounting daybook audit, and vault transfer reconciliation.',
+    description: 'Provides comprehensive End-of-Day (EOD) balancing for branch cashier drawers. Evaluates the balancing equation: Closing Cash Drawer = Opening Balance + Total Inflows (OTC Deposits + Verified Agent Handovers) - Total Outflows (OTC Withdrawals + Code Pickups + Cash Loan Disbursals). Integrates daybook cash logs and vault transfers to guarantee zero mismatch.',
+    roles: ['Cashier', 'Branch Manager', 'Financial Auditor'], platforms: ['Manager Dashboard'],
+    capabilities: [
+      'Daily branch transactions summary computation (GET /reports/transactions/summary)',
+      'Accounting daybook cash log inspection (GET /reports/accounting/daybook)',
+      'Deposit & withdrawal transaction history queries (GET /deposit/get-all-deposits)',
+      'Vault cash transfer reconciliation with physical count validation'
+    ],
+    workflow: [
+      { step: 1, title: 'Compute Drawer Inflows & Outflows', description: 'System tallies OTC deposits, agent handovers, withdrawals, and disbursements.' },
+      { step: 2, title: 'Physical Count Tally', description: 'Cashier inputs physical currency note count to verify zero variance.' },
+      { step: 3, title: 'Vault Settlement', description: 'Surplus drawer cash is transferred to the main branch vault and daybook is signed off.' }
+    ],
+    businessValue: [
+      { title: 'Zero Discrepancy Auditing', description: 'Ensures 100% reconciliation between digital transaction logs and physical vault currency.' }
+    ],
+    videoUrl: '/videos/VAHT-axQ83g.mp4'
+  },
+  {
+    id: 'branch-cashier-security', number: '10.7', categorySlug: 'branch-cash-operations',
+    title: 'Cashier Onboarding & Security Boundary',
+    shortDescription: 'Dedicated teller provisioning, credential onboarding, and role-based AuthGuard route restrictions.',
+    description: 'Manages cashier provisioning, employee onboarding, and strict architectural route confinement. Managers provision cashier accounts with designated drawer IDs. An AuthGuard route barrier confines cashier sessions exclusively to /cashier, /loan-disbursements, and /agent-handovers, automatically deflecting unauthorized access attempts away from executive settings and master records.',
+    roles: ['Branch Manager', 'Admin', 'Cashier'], platforms: ['Manager Dashboard'],
+    capabilities: [
+      'Branch cashier employee creation and desk assignment (POST /employee/create-branch-cashier)',
+      'Secure employee authentication (POST /employee/employee-login)',
+      'Automated role-based route guard confinement to /cashier, /loan-disbursements, and /agent-handovers',
+      'Session timeout and security audit logging for counter terminals'
+    ],
+    workflow: [
+      { step: 1, title: 'Cashier Provisioning', description: 'Branch manager creates cashier account with assigned branch and cash drawer ID.' },
+      { step: 2, title: 'Employee Authentication', description: 'Cashier logs in via dedicated terminal endpoint.' },
+      { step: 3, title: 'AuthGuard Confinement', description: 'System locks session to counter operations and restricts administrative tabs.' }
+    ],
+    businessValue: [
+      { title: 'Architectural Security', description: 'Guarantees zero unauthorized privilege escalation and secures operational counter terminals.' }
     ],
     videoUrl: '/videos/VAHT-axQ83g.mp4'
   },
 
   // ==========================================
-  // MODULE 11: AI Advisor & Intelligent Automation
+  // MODULE 11: Branch Manager & Governance Hub
   // ==========================================
   {
-    id: 'ai-wealth-advisor', number: '11.1', categorySlug: 'ai-intelligent-automation',
+    id: 'branch-strict-data-scoping', number: '11.1', categorySlug: 'branch-manager-governance',
+    title: 'Strict Branch Data Scoping & Multi-Tenant Isolation',
+    shortDescription: 'Multi-tenant security perimeter restricting manager access strictly to branch-scoped customers, loans, cashiers, accounts, and assets.',
+    description: 'Enforces an architectural security perimeter that automatically restricts the branch manager\'s operational and supervisory visibility strictly to records (customers, loan applications, staff rosters, cashier accounts, and branch fixed assets) belonging to their assigned branchId. Systematically shields against unauthorized cross-branch data access or leaks.',
+    roles: ['Branch Manager', 'Admin'], platforms: ['Manager Dashboard', 'Core Banking Engine'],
+    capabilities: [
+      'Automated tenant isolation restricting queries to authenticated manager branchId',
+      'Data perimeter enforcement across customer profiles, loans, deposits, and cash drawers',
+      'Role-based access control (RBAC) preventing cross-branch unauthorized tampering',
+      'Security audit logging for unauthorized cross-branch query interception'
+    ],
+    workflow: [
+      { step: 1, title: 'Manager Authentication', description: 'Branch manager logs into supervisory console with credentials.' },
+      { step: 2, title: 'Context & Scope Injection', description: 'Security layer validates claims and locks active session to branchId.' },
+      { step: 3, title: 'Isolated Query Execution', description: 'All database queries automatically inject branch filter parameters.' },
+      { step: 4, title: 'Perimeter Defense', description: 'Cross-branch data access attempts are denied with 403 Forbidden.' }
+    ],
+    businessValue: [
+      { title: 'Zero Data Leakage', description: 'Guarantees absolute branch isolation and regulatory compliance under banking privacy laws.' }
+    ],
+    videoUrl: null
+  },
+  {
+    id: 'branch-staff-cashier-provisioning', number: '11.2', categorySlug: 'branch-manager-governance',
+    title: 'Branch Staff & Cashier Provisioning',
+    shortDescription: 'Creates, provisions, and onboards new branch cashiers and operational desk staff into the CASH department.',
+    description: 'Supervisory onboarding workflow allowing branch managers to create operational teller profiles, provision secure authentication credentials, allocate desk drawers, and establish payroll compensation records directly into the CASH department.',
+    roles: ['Branch Manager', 'Admin'], platforms: ['Manager Dashboard', 'Core Banking Engine'],
+    capabilities: [
+      'Cashier employee onboarding with official ID, payroll, and desk assignment (POST /employee/create-branch-cashier)',
+      'Automated credential hashing and welcome activation dispatch',
+      'CASH department role provisioning with desk limit bindings',
+      'Real-time staff roster management and branch attendance tracking'
+    ],
+    workflow: [
+      { step: 1, title: 'Input Staff Profile', description: 'Manager submits employee KYC, department, salary, and initial password.' },
+      { step: 2, title: 'Generate Employee ID', description: 'System issues unique branch cashier identifier (e.g., CSH-MUM-012).' },
+      { step: 3, title: 'Bind CASH Department Role', description: 'Grants restricted teller access credentials confined to cashier counter desk.' }
+    ],
+    businessValue: [
+      { title: 'Rapid Onboarding', description: 'Provisions operational counter tellers in under 2 minutes with automated security boundaries.' }
+    ],
+    videoUrl: null
+  },
+  {
+    id: 'branch-doorstep-logistics-dispatch', number: '11.3', categorySlug: 'branch-manager-governance',
+    title: 'Doorstep Logistics & Field Agent Dispatch',
+    shortDescription: 'Real-time allocation and dispatch of field agents for customer doorstep cash delivery requests.',
+    description: 'When customers place doorstep cash delivery orders (agent_cash_delivery), the supervisory dashboard queues pending withdrawal requests and allows the branch manager to assign specific field agents based on proximity, route schedules, and cash-in-transit limits.',
+    roles: ['Branch Manager', 'Admin'], platforms: ['Manager Dashboard', 'Field Agent Mobile App'],
+    capabilities: [
+      'Live doorstep cash delivery dispatch queue (PATCH /cash-withdrawals/branch/assign-agent/:requestId)',
+      'Proximity-based agent routing and territory assignment',
+      'Cash-in-transit limit validation before task allocation',
+      'Real-time GPS status monitoring and doorstep delivery fulfillment tracking'
+    ],
+    workflow: [
+      { step: 1, title: 'Receive Doorstep Request', description: 'Customer requests cash delivery; system queues withdrawal at branch.' },
+      { step: 2, title: 'Select Available Agent', description: 'Branch manager selects field agent with sufficient cash limit.' },
+      { step: 3, title: 'Dispatch & Real-time Tracking', description: 'Agent receives push alert with destination coordinates and one-time delivery code.' }
+    ],
+    businessValue: [
+      { title: 'Logistics Optimization', description: 'Slashes doorstep fulfillment turnaround time by 40% with automated dispatching.' }
+    ],
+    videoUrl: null
+  },
+  {
+    id: 'branch-loan-governance-lifecycle', number: '11.4', categorySlug: 'branch-manager-governance',
+    title: 'Full Loan Governance Lifecycle & Digital e-Stamp Contracts',
+    shortDescription: '6-stage credit governance: verification, sanctioning, Zoop e-Stamp order, multi-party eSign, cashier allocation, and disbursement.',
+    description: 'Complete multi-tier supervisory credit management lifecycle. Guides loan files from initial application verification and underwriter rejection, through sanctioning with auto-calculated amortization, Zoop state digital e-Stamp procurement, multi-party legal contract eSign (Borrower, Chairman/Manager, Guarantors), cashier counter desk allocation, and final cash/cheque disbursement execution.',
+    roles: ['Branch Manager', 'Admin', 'Underwriter'], platforms: ['Manager Dashboard', 'Zoop Contract Gateway', 'Cashier Counter Desk'],
+    capabilities: [
+      'Application Verification & Rejection (PATCH /loan/verify-loan/:loanId & /loan/reject-loan/:loanId)',
+      'Sanctioning & auto-generated amortization schedule (PATCH /loan/approve-loan/:loanId)',
+      'State digital e-Stamp order procurement via Zoop API (POST /esign/generateEstamp/:loanId)',
+      'Multi-party eSign orchestration for borrower, manager & guarantors (POST /esign/assign-eStamp)',
+      'Real-time Aadhaar OTP eSign tracking (GET /esign/esign-status/:loanId)',
+      'Cashier counter desk allocation (PATCH /loan/allocate-cashier/:loanId) & disbursement execution (PATCH /loan/disburse-loan/:loanId)'
+    ],
+    workflow: [
+      { step: 1, title: 'Verification & Rejection', description: 'Branch manager reviews submitted KYC documents; marks verified or rejects with notes.' },
+      { step: 2, title: 'Sanction & Amortization', description: 'Approves loan amount; engine instantly calculates schedule and generates all future loanEmis.' },
+      { step: 3, title: 'Zoop e-Stamp Procurement', description: 'Initiates API call to Zoop to procure official state stamp duty with an order reference.' },
+      { step: 4, title: 'Multi-Party eSign Flow', description: 'Configures e-Stamp contract and dispatches legal signing invites to borrower, manager, and guarantors.' },
+      { step: 5, title: 'Cashier Allocation', description: 'Assigns sanctioned loan to specific teller counter for physical verification and cash handover.' },
+      { step: 6, title: 'Disbursement Execution', description: 'Cashier executes cash/cheque disbursement (or manager executes administrative override).' }
+    ],
+    businessValue: [
+      { title: 'End-to-End Governance', description: 'Eliminates paper agreements, accelerates credit turnaround from 7 days to 20 minutes, and ensures 100% legal enforceability.' }
+    ],
+    videoUrl: null
+  },
+  {
+    id: 'branch-assisted-rd-creation', number: '11.5', categorySlug: 'branch-manager-governance',
+    title: 'Assisted Recurring Deposit (RD) Account Creation',
+    shortDescription: 'Manager-assisted term deposit account creation and first cash installment receipting for walk-in branch members.',
+    description: 'Enables branch managers and supervisory desk staff to open high-interest Recurring Deposit (RD) accounts on behalf of walk-in branch members. Configures monthly installment amounts, tenure, automated maturity yields, and logs the initial physical cash installment receipt directly into the core banking engine.',
+    roles: ['Branch Manager', 'Admin'], platforms: ['Manager Dashboard', 'Core Banking Engine'],
+    capabilities: [
+      'Assisted RD account opening for branch customers (POST /recurring-deposit/branch/create-rd)',
+      'Real-time compound interest calculation and maturity projections',
+      'First installment payment mode support (cash / savings debit)',
+      'Instant digital deposit certificate and receipt generation'
+    ],
+    workflow: [
+      { step: 1, title: 'Select Customer & Plan', description: 'Manager pulls member profile and inputs monthly installment, tenure, and interest rate.' },
+      { step: 2, title: 'Accept First Cash Installment', description: 'Collects first installment cash at branch desk and generates transaction receipt.' },
+      { step: 3, title: 'Activate RD Account', description: 'System creates active recurring deposit account and schedules future automated sweeps.' }
+    ],
+    businessValue: [
+      { title: 'Deposit Growth', description: 'Accelerates branch retail savings mobilization with zero customer friction.' }
+    ],
+    videoUrl: null
+  },
+  {
+    id: 'branch-jlg-microfinance-approvals', number: '11.6', categorySlug: 'branch-manager-governance',
+    title: 'Microfinance Joint Liability Group (JLG / SHG) Approvals',
+    shortDescription: 'Supervision and sanctioning of community Joint Liability Groups, center meetings, and collective liability loans.',
+    description: 'Dedicated microfinance governance module for branch heads to inspect Joint Liability Groups (JLG) and Self-Help Groups (SHG), review center meeting schedules, validate cross-guarantee matrices, and issue collective loan sanctions.',
+    roles: ['Branch Manager', 'Admin'], platforms: ['Manager Dashboard', 'Core Banking Engine'],
+    capabilities: [
+      'JLG and SHG group roster and center meeting inspection (GET /joint-liability/group)',
+      'Collective credit appraisal and group loan sanctioning (POST /joint-liability/loan/approve)',
+      'Peer cross-guarantee validation and individual member allocation breakdowns',
+      'Center meeting schedule and repayment cycle management'
+    ],
+    workflow: [
+      { step: 1, title: 'Review Group Formation', description: 'Inspects member composition, center leader endorsement, and KYC records.' },
+      { step: 2, title: 'Validate Center Meetings', description: 'Confirms meeting frequency and repayment schedule with center officers.' },
+      { step: 3, title: 'Sanction Collective Loan', description: 'Issues joint loan sanction and queues funds for center disbursement.' }
+    ],
+    businessValue: [
+      { title: 'Financial Inclusion', description: 'Drives rural and community lending while minimizing credit defaults via peer liability dynamics.' }
+    ],
+    videoUrl: null
+  },
+  {
+    id: 'branch-fixed-assets-vault-treasury', number: '11.7', categorySlug: 'branch-manager-governance',
+    title: 'Branch Fixed Assets & Cash Vault Treasury',
+    shortDescription: 'Supervision of physical branch assets, currency machines, and live monitoring of cash vault balances.',
+    description: 'Provides comprehensive governance over branch physical infrastructure (currency counters, biometric scanners, fireproof safe lockers, and CCTV installations) alongside real-time oversight of branch vault accounts, petty cash reserves, and corporate bank drawdowns.',
+    roles: ['Branch Manager', 'Admin', 'Financial Auditor'], platforms: ['Manager Dashboard', 'Treasury Ledger'],
+    capabilities: [
+      'Live cash vault and petty cash balance supervision (GET /treasury/accounts)',
+      'Branch hardware and fixed asset inventory monitoring (GET /fixed-asset/branch-assets)',
+      'Daily vault holding threshold alerts and excess liquidity sweep warnings',
+      'Locker room and asset maintenance audit trail'
+    ],
+    workflow: [
+      { step: 1, title: 'Inspect Vault Balances', description: 'Monitors real-time cash vault holdings against branch regulatory insurance caps.' },
+      { step: 2, title: 'Review Petty Cash Needs', description: 'Audits branch day-to-day operational expense disbursements.' },
+      { step: 3, title: 'Audit Fixed Assets', description: 'Conducts periodic verification of biometric devices, currency counters, and lockers.' }
+    ],
+    businessValue: [
+      { title: 'Asset Integrity', description: 'Protects branch capital assets, prevents vault idle cash accumulation, and maintains insurance compliance.' }
+    ],
+    videoUrl: null
+  },
+  {
+    id: 'branch-kpi-board-pack-reports', number: '11.8', categorySlug: 'branch-manager-governance',
+    title: 'Branch KPI Analytics & Board Pack Reports',
+    shortDescription: 'Real-time performance analytics, collection efficiency, delinquency tracking, and monthly board pack generation.',
+    description: 'Executive reporting center delivering real-time branch performance metrics: live customer growth, loans disbursed, daily recovery ratios, portfolio delinquency (PAR 30/60/90), and one-click consolidated monthly board governance packs for executive committee reviews.',
+    roles: ['Branch Manager', 'Admin', 'Chairman / Admin'], platforms: ['Manager Dashboard', 'Executive BI Reports'],
+    capabilities: [
+      'Real-time customer growth and loan disbursement statistics (GET /branch/get-branch-stats)',
+      'Daily collection efficiency and recovery monitoring (GET /reports/collections)',
+      'Comprehensive operational branch health indicators (GET /reports/dashboard)',
+      'Automated monthly executive board pack PDF compiler (GET /reports/board-pack)'
+    ],
+    workflow: [
+      { step: 1, title: 'Monitor Live Branch KPIs', description: 'Tracks daily footfall, disbursals, deposits, and agent collections.' },
+      { step: 2, title: 'Track Portfolio Delinquency', description: 'Analyzes early warning indicators and PAR buckets for proactive recovery.' },
+      { step: 3, title: 'Export Board Pack', description: 'Generates consolidated monthly supervisory report pack for board meetings.' }
+    ],
+    businessValue: [
+      { title: 'Executive Transparency', description: 'Gives management 100% visibility into branch health, recovery ratios, and profitability.' }
+    ],
+    videoUrl: null
+  },
+
+  // ==========================================
+  // MODULE 12: AI Advisor & Intelligent Automation
+  // ==========================================
+  {
+    id: 'ai-wealth-advisor', number: '12.1', categorySlug: 'ai-intelligent-automation',
     title: 'AI Wealth Advisor & Personalized Financial Companion',
     shortDescription: 'Smart AI wealth companion offering personalized investment tips, yield optimization, and portfolio guidance.',
     description: 'Empowers cooperative members with an AI-driven wealth advisor that analyzes spending patterns, suggests auto-sweep threshold optimizations, and recommends tailored savings & deposit plans.',
@@ -900,7 +1208,7 @@ const rawFeaturesData = [
     videoUrl: '/videos/VAHT-QBT93M.mp4'
   },
   {
-    id: 'ai-doc-ocr-audit', number: '11.2', categorySlug: 'ai-intelligent-automation',
+    id: 'ai-doc-ocr-audit', number: '12.2', categorySlug: 'ai-intelligent-automation',
     title: 'AI Loan Document OCR & Automated Compliance Inspector',
     shortDescription: 'Automates loan agreement verification, income document OCR extraction, and regulatory compliance auditing.',
     description: 'Integrates AI computer vision and OCR to audit scanned loan agreements, pay slips, and property deeds. Automatically flags missing signatures, income mismatches, or invalid document templates.',
@@ -917,7 +1225,7 @@ const rawFeaturesData = [
     videoUrl: '/videos/VAHT-QBT93M.mp4'
   },
   {
-    id: 'ai-conversational-bot', number: '11.3', categorySlug: 'ai-intelligent-automation',
+    id: 'ai-conversational-bot', number: '12.3', categorySlug: 'ai-intelligent-automation',
     title: 'Conversational Natural Language Banking Query Bot',
     shortDescription: 'Multi-lingual conversational AI bot allowing members to query balances, mini-statements, and loan status in natural language.',
     description: 'Enables cooperative members to interact with their accounts using natural language voice and text queries in English, Hindi, and regional languages.',
@@ -934,7 +1242,7 @@ const rawFeaturesData = [
     videoUrl: '/videos/VAHT-QBT93M.mp4'
   },
   {
-    id: 'ai-risk-detector', number: '11.4', categorySlug: 'ai-intelligent-automation',
+    id: 'ai-risk-detector', number: '12.4', categorySlug: 'ai-intelligent-automation',
     title: 'AI Fraud Pattern & Risk Anomaly Detector',
     shortDescription: 'Real-time machine learning engine detecting suspicious transaction velocity, abnormal withdrawals, and credit risk signals.',
     description: 'Monitors incoming transaction streams to detect unusual payment velocity, geographical anomalies, or credit default signals before financial loss occurs.',
@@ -952,10 +1260,10 @@ const rawFeaturesData = [
   },
 
   // ==========================================
-  // MODULE 12: Executive Governance, Accounting & Analytics
+  // MODULE 13: Executive Governance, Accounting & Analytics
   // ==========================================
   {
-    id: 'gov-executive-analytics', number: '12.1', categorySlug: 'executive-governance-analytics',
+    id: 'gov-executive-analytics', number: '13.1', categorySlug: 'executive-governance-analytics',
     title: 'Executive Governance & Final Loan Sanction Authority',
     shortDescription: 'Board-level governance, loan sanction limit approvals, and executive risk sign-offs.',
     description: 'Grants Chairman and executive board leadership final digital sign-off authority for high-value loan sanctions and macro institutional policy controls.',
@@ -971,7 +1279,7 @@ const rawFeaturesData = [
     videoUrl: '/videos/VAHT-Qi9W-A.mp4'
   },
   {
-    id: 'gov-general-ledger', number: '12.2', categorySlug: 'executive-governance-analytics',
+    id: 'gov-general-ledger', number: '13.2', categorySlug: 'executive-governance-analytics',
     title: 'Double-Entry General Ledger & Accounting Core',
     shortDescription: 'Central double-entry ledger, automated trial balance generation, and multi-branch P&L consolidation.',
     description: 'Powers the core double-entry accounting engine for automated journal entries, P&L calculations, and multi-branch balance sheet consolidation.',
@@ -1376,6 +1684,153 @@ const defaultApiByFeatureId = {
     responsePayload: { success: true, visitId: 'VST-2026-881', targetProgressPercentage: 78.5 },
     curl: `curl -X POST "https://api.fivopay.com/api/v1/agent/gps-checkin" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -d '{"agentId": "agt_9912"}'`
   },
+  // MODULE 10: Branch Cashier Operations
+  'branch-otc-deposit': {
+    method: 'POST',
+    endpoint: '/api/v1/deposit/cashier-deposit',
+    authRequired: true,
+    requestPayload: {
+      userId: '664f8a3d1b2c3d4e5f6a7b8c',
+      amount: 10000,
+      notes: 'Cash deposit at counter'
+    },
+    responsePayload: {
+      success: true,
+      message: 'Cash deposit processed successfully',
+      transactionId: 'TXN-DEP-2026-98102',
+      updatedBalance: 65000.00,
+      drawerCashBalance: 260000.00
+    },
+    curl: `curl -X POST "https://api.fivopay.com/api/v1/deposit/cashier-deposit" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -H "Content-Type: application/json" \\\n  -d '{"userId": "664f8a3d1b2c3d4e5f6a7b8c", "amount": 10000, "notes": "Cash deposit at counter"}'`
+  },
+  'branch-otc-withdrawal': {
+    method: 'POST',
+    endpoint: '/api/v1/deposit/cashier-withdrawal',
+    authRequired: true,
+    requestPayload: {
+      userId: '664f8a3d1b2c3d4e5f6a7b8c',
+      amount: 5000,
+      notes: 'Walk-in cash withdrawal'
+    },
+    responsePayload: {
+      success: true,
+      message: 'Withdrawal processed successfully',
+      transactionId: 'TXN-WTH-2026-44012',
+      remainingBalance: 60000.00,
+      drawerCashBalance: 255000.00
+    },
+    curl: `curl -X POST "https://api.fivopay.com/api/v1/deposit/cashier-withdrawal" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -H "Content-Type: application/json" \\\n  -d '{"userId": "664f8a3d1b2c3d4e5f6a7b8c", "amount": 5000, "notes": "Walk-in cash withdrawal"}'`
+  },
+  'branch-code-cash-pickup': {
+    method: 'PATCH',
+    endpoint: '/api/v1/cash-withdrawal/cashier/complete-by-code',
+    authRequired: true,
+    relatedEndpoints: [
+      { method: 'GET', endpoint: '/api/v1/cash-withdrawal/cashier/requests', description: 'View branch withdrawal queue' },
+      { method: 'PATCH', endpoint: '/api/v1/cash-withdrawal/cashier/complete-by-code', description: 'Dispense cash by 4-digit code' },
+      { method: 'PATCH', endpoint: '/api/v1/cash-withdrawal/cashier/request/:requestId/status', description: 'Update or cancel withdrawal request status' }
+    ],
+    requestPayload: {
+      cashierRequestCode: '4819'
+    },
+    responsePayload: {
+      success: true,
+      message: 'Cash dispensed successfully',
+      requestId: 'req_wth_9921',
+      dispensedAmount: 2000,
+      status: 'completed'
+    },
+    curl: `curl -X PATCH "https://api.fivopay.com/api/v1/cash-withdrawal/cashier/complete-by-code" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -H "Content-Type: application/json" \\\n  -d '{"cashierRequestCode": "4819"}'`
+  },
+  'branch-agent-settlement': {
+    method: 'POST',
+    endpoint: '/api/v1/agent/collection-submission/verify',
+    authRequired: true,
+    relatedEndpoints: [
+      { method: 'GET', endpoint: '/api/v1/agent/collection-submission/branch-pending', description: 'View branch pending handover queue' },
+      { method: 'POST', endpoint: '/api/v1/agent/collection-submission/verify', description: 'Verify & accept cash handover (OTP)' },
+      { method: 'POST', endpoint: '/api/v1/agent/collection-submission/regenerate-otp', description: 'Regenerate handover OTP if expired' },
+      { method: 'GET', endpoint: '/api/v1/agent/collection-submission/branch-history', description: 'Branch handover settlement history' }
+    ],
+    requestPayload: {
+      submissionId: '664f8a3d1b2c3d4e5f6a7b8c',
+      otp: '837194'
+    },
+    responsePayload: {
+      success: true,
+      message: 'Collection submission verified successfully'
+    },
+    curl: `curl -X POST "https://api.fivopay.com/api/v1/agent/collection-submission/verify" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -H "Content-Type: application/json" \\\n  -d '{"submissionId": "664f8a3d1b2c3d4e5f6a7b8c", "otp": "837194"}'`
+  },
+  'branch-loan-disbursement': {
+    method: 'PATCH',
+    endpoint: '/api/v1/loan/disburse-loan/LN-2026-004812',
+    authRequired: true,
+    relatedEndpoints: [
+      { method: 'GET', endpoint: '/api/v1/loan/get-all-loans?approvalStatus=approved&assignedCashier=<cashierId>', description: 'Fetch assigned loans pending disbursement' },
+      { method: 'GET', endpoint: '/api/v1/loan/get-all-loans?approvalStatus=disbursed&assignedCashier=<cashierId>', description: 'Fetch disbursed loan history' },
+      { method: 'PATCH', endpoint: '/api/v1/loan/allocate-cashier/:id', description: 'Allocate cashier to loan' },
+      { method: 'PATCH', endpoint: '/api/v1/loan/disburse-loan/:id', description: 'Execute loan cash disbursement' }
+    ],
+    requestPayload: {
+      cashierId: '664f8a3d1b2c3d4e5f6a7b8c',
+      notes: 'Allocated to Counter 1'
+    },
+    responsePayload: {
+      success: true,
+      loanId: 'LN-2026-004812',
+      status: 'DISBURSED',
+      disbursedAmount: 150000.00,
+      disbursedAt: '2026-09-22T17:40:00Z'
+    },
+    curl: `curl -X PATCH "https://api.fivopay.com/api/v1/loan/disburse-loan/LN-2026-004812" \\\n  -H "Authorization: Bearer <JWT_TOKEN>"`
+  },
+  'branch-daily-balancing': {
+    method: 'GET',
+    endpoint: '/api/v1/reports/transactions/summary',
+    authRequired: true,
+    relatedEndpoints: [
+      { method: 'GET', endpoint: '/api/v1/reports/transactions/summary?dateFrom=YYYY-MM-DD&dateTo=YYYY-MM-DD', description: 'Daily branch transactions summary' },
+      { method: 'GET', endpoint: '/api/v1/reports/accounting/daybook?date=YYYY-MM-DD', description: 'Daily daybook / cash log' },
+      { method: 'GET', endpoint: '/api/v1/deposit/get-all-deposits?page=1&limit=10&paymentMethod=branch_deposit', description: 'Branch deposit transaction history' },
+      { method: 'GET', endpoint: '/api/v1/deposit/get-all-deposits?page=1&limit=10&transactionType=withdrawal', description: 'Branch withdrawal transaction history' }
+    ],
+    requestPayload: null,
+    responsePayload: {
+      success: true,
+      date: '2026-09-22',
+      openingCashBalance: 200000.00,
+      totalInflows: 65000.00,
+      totalOutflows: 25000.00,
+      closingCashBalance: 240000.00,
+      reconciliationStatus: 'BALANCED'
+    },
+    curl: `curl -X GET "https://api.fivopay.com/api/v1/reports/transactions/summary?dateFrom=2026-09-22&dateTo=2026-09-22" \\\n  -H "Authorization: Bearer <JWT_TOKEN>"`
+  },
+  'branch-cashier-security': {
+    method: 'POST',
+    endpoint: '/api/v1/employee/create-branch-cashier',
+    authRequired: true,
+    relatedEndpoints: [
+      { method: 'POST', endpoint: '/api/v1/employee/create-branch-cashier', description: 'Create branch cashier employee' },
+      { method: 'POST', endpoint: '/api/v1/employee/employee-login', description: 'Cashier terminal login' }
+    ],
+    requestPayload: {
+      fullName: 'Pooja Verma',
+      email: 'pooja.cashier@fivopay.com',
+      phone: '9876543211',
+      branchId: 'brn_001',
+      drawerId: 'DRW-CASHIER-01'
+    },
+    responsePayload: {
+      success: true,
+      employeeId: 'emp_cashier_10',
+      role: 'cashier',
+      allowedRoutes: ['/cashier', '/loan-disbursements', '/agent-handovers']
+    },
+    curl: `curl -X POST "https://api.fivopay.com/api/v1/employee/create-branch-cashier" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -H "Content-Type: application/json" \\\n  -d '{"fullName": "Pooja Verma", "branchId": "brn_001", "role": "cashier"}'`
+  },
+  // Legacy aliases
   'branch-cashier-desk': {
     method: 'POST',
     endpoint: '/api/v1/cashier/counter/dispense',
@@ -1410,6 +1865,237 @@ const defaultApiByFeatureId = {
       message: 'Collection submission verified successfully'
     },
     curl: `curl -X POST "https://api.fivopay.com/api/v1/agent/collection-submission/verify" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -H "Content-Type: application/json" \\\n  -d '{"submissionId": "sub_987654", "otp": "482910"}'`
+  },
+  'branch-strict-data-scoping': {
+    method: 'GET',
+    endpoint: '/api/v1/branch/context',
+    authRequired: true,
+    relatedEndpoints: [
+      { method: 'GET', endpoint: '/api/v1/branch/context', description: 'Fetch authenticated branch manager perimeter and scoping context' },
+      { method: 'GET', endpoint: '/api/v1/branch/isolated-records', description: 'Retrieve branch-isolated accounts, staff, and customer records' }
+    ],
+    requestPayload: null,
+    responsePayload: {
+      success: true,
+      branchId: 'BR-MUM-FORT-01',
+      branchName: 'Mumbai Fort Commercial Branch',
+      managerId: 'emp_mgr_881920',
+      role: 'branch_manager',
+      isolationMode: 'STRICT_BRANCH_SCOPED',
+      accessibleEntities: [
+        'CUSTOMERS',
+        'LOANS',
+        'STAFF_CASHIERS',
+        'VAULT_ACCOUNTS',
+        'FIXED_ASSETS'
+      ]
+    },
+    curl: `curl -X GET "https://api.fivopay.com/api/v1/branch/context" \\\n  -H "Authorization: Bearer <JWT_TOKEN>"`
+  },
+  'branch-staff-cashier-provisioning': {
+    method: 'POST',
+    endpoint: '/api/v1/employee/create-branch-cashier',
+    authRequired: true,
+    roles: ['branch_manager', 'manager', 'admin'],
+    requestPayload: {
+      employeeId: 'CSH-MUM-012',
+      firstName: 'Rahul',
+      lastName: 'Sharma',
+      email: 'rahul.csh@fivopay.com',
+      phone: '9876543210',
+      dateOfBirth: '1995-04-12',
+      gender: 'male',
+      addressLine1: 'Branch Premises, Fort',
+      city: 'Mumbai',
+      state: 'Maharashtra',
+      postalCode: '400001',
+      dateOfJoining: '2026-09-01',
+      salary: 32000,
+      password: 'SecurePassword@123'
+    },
+    responsePayload: {
+      success: true,
+      message: 'Branch cashier Rahul Sharma successfully provisioned',
+      employee: {
+        id: 'emp_6650a1b2c3d4e5f6a7b8c9d0',
+        employeeId: 'CSH-MUM-012',
+        name: 'Rahul Sharma',
+        department: 'CASH',
+        role: 'cashier',
+        branchId: 'BR-MUM-FORT-01',
+        status: 'ACTIVE'
+      }
+    },
+    curl: `curl -X POST "https://api.fivopay.com/api/v1/employee/create-branch-cashier" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -H "Content-Type: application/json" \\\n  -d '{"employeeId": "CSH-MUM-012", "firstName": "Rahul", "lastName": "Sharma", "email": "rahul.csh@fivopay.com", "phone": "9876543210", "salary": 32000}'`
+  },
+  'branch-doorstep-logistics-dispatch': {
+    method: 'PATCH',
+    endpoint: '/api/v1/cash-withdrawals/branch/assign-agent/req_6650a1b2c3d4',
+    authRequired: true,
+    relatedEndpoints: [
+      { method: 'GET', endpoint: '/api/v1/cash-withdrawals/branch/requests', description: 'List pending doorstep cash delivery requests for branch' },
+      { method: 'PATCH', endpoint: '/api/v1/cash-withdrawals/branch/assign-agent/:requestId', description: 'Assign field agent to doorstep cash delivery request' },
+      { method: 'GET', endpoint: '/api/v1/cash-withdrawals/branch/agent-status', description: 'Monitor field agents active delivery status and GPS' }
+    ],
+    requestPayload: {
+      agentId: 'emp_6650a1b2c3d4e5f6a7b8c9d0'
+    },
+    responsePayload: {
+      success: true,
+      message: 'Field agent successfully assigned to doorstep cash delivery',
+      requestId: 'req_6650a1b2c3d4',
+      agentId: 'emp_6650a1b2c3d4e5f6a7b8c9d0',
+      status: 'agent_assigned',
+      assignedAt: '2026-09-22T10:15:30Z'
+    },
+    curl: `curl -X PATCH "https://api.fivopay.com/api/v1/cash-withdrawals/branch/assign-agent/req_6650a1b2c3d4" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -H "Content-Type: application/json" \\\n  -d '{"agentId": "emp_6650a1b2c3d4e5f6a7b8c9d0"}'`
+  },
+  'branch-loan-governance-lifecycle': {
+    method: 'POST',
+    endpoint: '/api/v1/esign/assign-eStamp',
+    authRequired: true,
+    relatedEndpoints: [
+      { method: 'PATCH', endpoint: '/api/v1/loan/verify-loan/:loanId', description: 'Step 1: Changes loan status from pending to verified' },
+      { method: 'PATCH', endpoint: '/api/v1/loan/reject-loan/:loanId', description: 'Step 1: Rejects loan application with underwriter notes' },
+      { method: 'PATCH', endpoint: '/api/v1/loan/approve-loan/:loanId', description: 'Step 2: Approves loan & auto-generates EMI repayment schedule' },
+      { method: 'POST', endpoint: '/api/v1/esign/generateEstamp/:loanId', description: 'Step 3: Zoop API procurement of official state stamp duty order ID' },
+      { method: 'POST', endpoint: '/api/v1/esign/assign-eStamp', description: 'Step 4: Configures e-Stamp & multi-party signers (borrower, manager, guarantors)' },
+      { method: 'GET', endpoint: '/api/v1/esign/esign-status/:loanId', description: 'Step 4: Real-time Aadhaar OTP multi-party digital signature tracking' },
+      { method: 'PATCH', endpoint: '/api/v1/loan/allocate-cashier/:loanId', description: 'Step 5: Allocates verified loan to cashier counter desk' },
+      { method: 'PATCH', endpoint: '/api/v1/loan/disburse-loan/:loanId', description: 'Step 6: Payout disbursement execution (teller or manager override)' }
+    ],
+    requestPayload: {
+      loanId: '664f8a3d1b2c3d4e',
+      estampId: 'EST-MH-948201',
+      pdfUrl: 'https://storage.fivopay.com/agreements/loan_4812.pdf',
+      guarantors: [
+        {
+          name: 'Suresh Patil',
+          email: 'suresh.patil@gmail.com',
+          phone: '9820012345'
+        }
+      ]
+    },
+    responsePayload: {
+      success: true,
+      loanId: '664f8a3d1b2c3d4e',
+      estampId: 'EST-MH-948201',
+      status: 'ESIGN_IN_PROGRESS',
+      signers: [
+        { role: 'BORROWER', status: 'PENDING' },
+        { role: 'BRANCH_MANAGER', status: 'PENDING' },
+        { role: 'GUARANTOR', name: 'Suresh Patil', status: 'PENDING' }
+      ],
+      esignTrackingUrl: '/api/v1/esign/esign-status/664f8a3d1b2c3d4e'
+    },
+    curl: `curl -X POST "https://api.fivopay.com/api/v1/esign/assign-eStamp" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -H "Content-Type: application/json" \\\n  -d '{"loanId": "664f8a3d1b2c3d4e", "estampId": "EST-MH-948201", "pdfUrl": "https://storage.fivopay.com/agreements/loan_4812.pdf", "guarantors": [{"name": "Suresh Patil", "email": "suresh.patil@gmail.com", "phone": "9820012345"}]}'`
+  },
+  'branch-assisted-rd-creation': {
+    method: 'POST',
+    endpoint: '/api/v1/recurring-deposit/branch/create-rd',
+    authRequired: true,
+    roles: ['branch_manager', 'manager', 'admin'],
+    requestPayload: {
+      userId: 'usr_664f8a3d1b2c3d4e5f6a7b8c',
+      monthlyInstallment: 5000,
+      tenureMonths: 12,
+      interestRate: 7.5,
+      firstInstallmentPaymentMode: 'cash'
+    },
+    responsePayload: {
+      success: true,
+      rdAccountId: 'RD-2026-004812',
+      userId: 'usr_664f8a3d1b2c3d4e5f6a7b8c',
+      monthlyInstallment: 5000,
+      tenureMonths: 12,
+      interestRate: 7.5,
+      maturityAmount: 62480.00,
+      firstInstallmentReceipt: 'RCP-RD-00129',
+      status: 'ACTIVE'
+    },
+    curl: `curl -X POST "https://api.fivopay.com/api/v1/recurring-deposit/branch/create-rd" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -H "Content-Type: application/json" \\\n  -d '{"userId": "usr_664f8a3d1b2c3d4e5f6a7b8c", "monthlyInstallment": 5000, "tenureMonths": 12, "interestRate": 7.5, "firstInstallmentPaymentMode": "cash"}'`
+  },
+  'branch-jlg-microfinance-approvals': {
+    method: 'POST',
+    endpoint: '/api/v1/joint-liability/loan/approve',
+    authRequired: true,
+    relatedEndpoints: [
+      { method: 'GET', endpoint: '/api/v1/joint-liability/group', description: 'List branch Joint Liability Groups and center meeting schedules' },
+      { method: 'POST', endpoint: '/api/v1/joint-liability/loan/approve', description: 'Sanction and approve collective JLG microfinance loan' }
+    ],
+    requestPayload: {
+      groupId: 'jlg_grp_664f8a3d1b2c',
+      sanctionedAmount: 300000,
+      memberCount: 6,
+      perMemberAllocation: 50000,
+      repaymentCycle: 'WEEKLY',
+      centerMeetingDay: 'TUESDAY'
+    },
+    responsePayload: {
+      success: true,
+      message: 'JLG group loan approved and scheduled for center disbursement',
+      groupId: 'jlg_grp_664f8a3d1b2c',
+      status: 'APPROVED',
+      totalSanctioned: 300000,
+      activeBorrowers: 6
+    },
+    curl: `curl -X POST "https://api.fivopay.com/api/v1/joint-liability/loan/approve" \\\n  -H "Authorization: Bearer <JWT_TOKEN>" \\\n  -H "Content-Type: application/json" \\\n  -d '{"groupId": "jlg_grp_664f8a3d1b2c", "sanctionedAmount": 300000}'`
+  },
+  'branch-fixed-assets-vault-treasury': {
+    method: 'GET',
+    endpoint: '/api/v1/treasury/accounts',
+    authRequired: true,
+    relatedEndpoints: [
+      { method: 'GET', endpoint: '/api/v1/treasury/accounts', description: 'Branch vault and petty cash balance supervision' },
+      { method: 'GET', endpoint: '/api/v1/fixed-asset/branch-assets', description: 'Supervise branch hardware, cash counters, and locker assets' }
+    ],
+    requestPayload: null,
+    responsePayload: {
+      success: true,
+      branchId: 'BR-MUM-FORT-01',
+      vault: {
+        accountCode: '1001-VAULT-MUM',
+        currentBalance: 4500000.00,
+        dailyLimit: 10000000.00,
+        holdingStatus: 'NORMAL'
+      },
+      pettyCash: {
+        accountCode: '1002-PETTY-MUM',
+        currentBalance: 28450.00,
+        monthlyAllowance: 50000.00
+      },
+      fixedAssetsCount: 14,
+      activeLockersCount: 60
+    },
+    curl: `curl -X GET "https://api.fivopay.com/api/v1/treasury/accounts" \\\n  -H "Authorization: Bearer <JWT_TOKEN>"`
+  },
+  'branch-kpi-board-pack-reports': {
+    method: 'GET',
+    endpoint: '/api/v1/reports/board-pack',
+    authRequired: true,
+    relatedEndpoints: [
+      { method: 'GET', endpoint: '/api/v1/branch/get-branch-stats', description: 'Real-time customer counts, loans disbursed, and active portfolio' },
+      { method: 'GET', endpoint: '/api/v1/reports/collections', description: 'Daily collection and delinquency percentages' },
+      { method: 'GET', endpoint: '/api/v1/reports/dashboard', description: 'Operational branch health, teller efficiency, and recovery ratios' },
+      { method: 'GET', endpoint: '/api/v1/reports/board-pack', description: 'Consolidated monthly governance pack for executive board meetings' }
+    ],
+    requestPayload: null,
+    responsePayload: {
+      success: true,
+      branchId: 'BR-MUM-FORT-01',
+      branchName: 'Mumbai Fort Branch',
+      reportMonth: 'September 2026',
+      stats: {
+        totalCustomers: 12840,
+        loansDisbursedMonth: 48250000.00,
+        collectionEfficiency: '99.2%',
+        delinquencyPAR30: '0.45%',
+        activeFieldAgents: 8,
+        tellerReconciliationStatus: 'BALANCED'
+      },
+      boardPackUrl: 'https://storage.fivopay.com/reports/board_pack_mum_sep2026.pdf'
+    },
+    curl: `curl -X GET "https://api.fivopay.com/api/v1/reports/board-pack" \\\n  -H "Authorization: Bearer <JWT_TOKEN>"`
   },
   'ai-wealth-advisor': {
     method: 'POST',
@@ -1491,7 +2177,7 @@ export const productFeatures = rawFeaturesData.map(feat => {
       { title: 'Efficiency', description: 'Streamlines operational turnaround times.' },
       { title: 'Security', description: 'Ensures 100% audit-proof transaction records.' }
     ],
-    videoUrl: feat.videoUrl || (cat ? cat.videoUrl : defaultVideoUrl),
+    videoUrl: feat.videoUrl !== undefined ? feat.videoUrl : (cat && cat.videoUrl !== undefined ? cat.videoUrl : null),
     screenshots: []
   };
 });

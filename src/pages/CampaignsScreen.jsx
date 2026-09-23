@@ -782,7 +782,7 @@ The Fivopay Team`,
                                 <Phone size={13} color="#1b68b3" fill="#1b68b3" />
                               </div>
                               <span style={{ color: '#ffffff', fontSize: '0.8rem', fontWeight: '600', whiteSpace: 'nowrap' }}>
-                                +91-9637708376
+                                +91-9096081885
                               </span>
                             </div>
 

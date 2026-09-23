@@ -108,6 +108,30 @@ function AdminCampaignsScreen() {
   const overallDeliveryRate = totalEmailsSent > 0 ? Math.round((totalDelivered / totalEmailsSent) * 100) : 100;
   const activeDispatchersCount = uniquePerformers.length;
 
+  const parsePerformer = (rawName, role) => {
+    if (!rawName) {
+      const isRoleAdmin = role?.toUpperCase() === 'ADMIN';
+      return {
+        name: isRoleAdmin ? 'System Administrator' : 'Sales Executive (BDE)',
+        tag: isRoleAdmin ? 'ADMIN' : 'SALES BDE'
+      };
+    }
+
+    const match = rawName.match(/^(.*?)\s*\((.*?)\)$/);
+    if (match) {
+      return {
+        name: match[1].trim(),
+        tag: match[2].trim().toUpperCase()
+      };
+    }
+
+    const tag = role?.toUpperCase() === 'ADMIN' ? 'ADMIN' : 'SALES BDE';
+    return {
+      name: rawName.trim(),
+      tag
+    };
+  };
+
   const getInitials = (name) => {
     if (!name) return 'SE';
     return name
