@@ -4,13 +4,14 @@ import {
   Users, BarChart3, Mail, LogOut, Sun, Moon, Shield, Settings, MonitorPlay, 
   ChevronDown, ChevronRight, UserCheck, Smartphone, ArrowLeftRight, Landmark, 
   PiggyBank, Zap, Lock, PieChart, Briefcase, Footprints, Banknote, Building2, 
-  ShieldAlert, Receipt, Brain, ShieldCheck, Layers, Calculator, History, Send
+  ShieldAlert, Receipt, Brain, ShieldCheck, Layers, Calculator, History, Send, X
 } from 'lucide-react';
 import { productCategories, moduleGroups } from '../data/productFeaturesData';
 
 function Sidebar({ activeTab, setActiveTab, onLogout, theme, setTheme, currentUser }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isFeaturesExpanded, setIsFeaturesExpanded] = useState(true);
   const [expandedGroups, setExpandedGroups] = useState({
     Customer: true,
@@ -341,7 +342,8 @@ function Sidebar({ activeTab, setActiveTab, onLogout, theme, setTheme, currentUs
             </div>
           </div>
           <button 
-            onClick={onLogout} 
+            type="button"
+            onClick={() => setShowLogoutModal(true)} 
             title="Log out" 
             style={{ 
               background: 'rgba(239, 68, 68, 0.08)', 
@@ -370,6 +372,143 @@ function Sidebar({ activeTab, setActiveTab, onLogout, theme, setTheme, currentUs
           </button>
         </div>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div 
+          className="modal-overlay" 
+          onClick={() => setShowLogoutModal(false)}
+          style={{ zIndex: 99999, animation: 'fadeIn 0.15s ease-out' }}
+        >
+          <div 
+            className="modal-content" 
+            onClick={(e) => e.stopPropagation()} 
+            style={{ 
+              maxWidth: '430px', 
+              padding: '1.75rem',
+              borderRadius: '16px',
+              textAlign: 'center',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.55)',
+              position: 'relative'
+            }}
+          >
+            {/* Close X Button */}
+            <button 
+              type="button" 
+              onClick={() => setShowLogoutModal(false)} 
+              className="close-btn"
+              style={{ position: 'absolute', top: '16px', right: '16px' }}
+              title="Cancel"
+            >
+              <X size={16} />
+            </button>
+
+            {/* Warning Icon Badge */}
+            <div style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '16px',
+              background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(244, 63, 94, 0.15))',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              color: 'var(--danger)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1.15rem auto'
+            }}>
+              <LogOut size={26} />
+            </div>
+
+            <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-primary)', margin: '0 0 0.45rem 0' }}>
+              Are you sure you want to log out?
+            </h3>
+            
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.5', margin: '0 0 1.25rem 0' }}>
+              You will be signed out of your Fivopay workspace. You'll need to enter your credentials to access your leads and campaigns again.
+            </p>
+
+            {/* Current User Session Preview */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              padding: '0.7rem 0.85rem',
+              background: 'rgba(255, 255, 255, 0.03)',
+              border: '1px solid var(--border)',
+              borderRadius: '10px',
+              marginBottom: '1.5rem',
+              textAlign: 'left'
+            }}>
+              <div style={{
+                width: '38px',
+                height: '38px',
+                borderRadius: '50%',
+                background: isAdmin ? 'linear-gradient(135deg, #6366f1, #4f46e5)' : 'linear-gradient(135deg, #10b981, #059669)',
+                color: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: '700',
+                fontSize: '0.825rem',
+                flexShrink: 0
+              }}>
+                {userInitials}
+              </div>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ fontSize: '0.875rem', fontWeight: '700', color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {currentUser?.name || 'User Session'}
+                </div>
+                <div style={{ fontSize: '0.725rem', color: isAdmin ? 'var(--accent)' : '#10b981', fontWeight: '700', letterSpacing: '0.02em', marginTop: '1px' }}>
+                  {isAdmin ? 'HEAD OF GOVERNANCE (ADMIN)' : 'FIELD SALES BDE'}
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setShowLogoutModal(false)}
+                style={{ 
+                  flex: 1, 
+                  height: '42px', 
+                  fontSize: '0.875rem', 
+                  fontWeight: '600',
+                  justifyContent: 'center'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn"
+                onClick={() => {
+                  setShowLogoutModal(false);
+                  onLogout();
+                }}
+                style={{ 
+                  flex: 1, 
+                  height: '42px', 
+                  fontSize: '0.875rem', 
+                  fontWeight: '700',
+                  background: 'var(--danger)',
+                  color: '#ffffff',
+                  border: 'none',
+                  justifyContent: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  boxShadow: '0 4px 14px rgba(239, 68, 68, 0.35)',
+                  cursor: 'pointer'
+                }}
+              >
+                <LogOut size={15} /> Yes, Log Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </aside>
   );
 }

@@ -10,6 +10,9 @@ function KPICards({ leads, campaigns, currentUser }) {
   const emailsSent = campaigns.reduce((acc, c) => acc + (c.sentCount || 0), 0);
   const winRate = totalLeads > 0 ? Math.round((wonLeads / totalLeads) * 100) : 0;
 
+  const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const leadsThisWeek = accessibleLeads.filter(l => l.createdAt && new Date(l.createdAt) >= oneWeekAgo).length;
+
   return (
     <section className="kpi-grid">
       {/* Total CRM Leads */}
@@ -22,10 +25,16 @@ function KPICards({ leads, campaigns, currentUser }) {
         </div>
         <div className="kpi-value">{totalLeads}</div>
         <div className="kpi-footer">
-          <span className="trend-pill up">
-            <TrendingUp size={12} /> +12%
-          </span>
-          <span>pipeline this week</span>
+          {leadsThisWeek > 0 ? (
+            <>
+              <span className="trend-pill up">
+                <TrendingUp size={12} /> +{leadsThisWeek}
+              </span>
+              <span>added this week</span>
+            </>
+          ) : (
+            <span style={{ color: 'var(--text-muted)' }}>Active prospects in pipeline</span>
+          )}
         </div>
       </div>
 

@@ -14,8 +14,8 @@ import AdminCampaignsScreen from './pages/AdminCampaignsScreen';
 import ProductFeaturesLanding from './pages/ProductFeaturesLanding';
 import CategoryDetailPage from './pages/CategoryDetailPage';
 import FeatureDetailPage from './pages/FeatureDetailPage';
-import { defaultLeads } from './data/defaultLeads';
 import { api } from './services/api';
+import { exportLeadsToPDF } from './utils/pdfExport';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => !!localStorage.getItem('fivopay_token'));
@@ -34,8 +34,8 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
   
-  // App States (Loaded from Backend or Default Leads Store)
-  const [leads, setLeads] = useState(() => defaultLeads);
+  // App States (Loaded directly from live MongoDB database)
+  const [leads, setLeads] = useState([]);
   const [campaigns, setCampaigns] = useState([]);
   const [selectedLeadId, setSelectedLeadId] = useState(null);
   const [showAddLead, setShowAddLead] = useState(false);
@@ -45,11 +45,11 @@ function App() {
     if (!isLoggedIn) return;
     try {
       const res = await api.getLeads();
-      if (res.data && res.data.length > 0) {
+      if (res && Array.isArray(res.data)) {
         setLeads(res.data);
       }
     } catch (err) {
-      console.warn('[App] Could not fetch backend leads, using offline CRM store:', err.message);
+      console.warn('[App] Could not fetch backend leads:', err.message);
     }
   };
 
@@ -107,10 +107,25 @@ function App() {
     }
   }, [location.pathname, activeTab]);
 
+  // Ensure activeTab is always valid for the authenticated user's role
+  useEffect(() => {
+    if (!currentUser) return;
+    const isAdmin = currentUser.role === 'ADMIN';
+    if (!isAdmin && (activeTab === 'team' || activeTab === 'all-campaigns')) {
+      setActiveTab('leads');
+    } else if (isAdmin && (activeTab === 'pipeline' || activeTab === 'campaigns' || activeTab === 'past-campaigns')) {
+      setActiveTab('all-campaigns');
+    }
+  }, [currentUser, activeTab]);
+
   // Handle Login / Logout
   const handleLoginSuccess = (userProfile) => {
     setIsLoggedIn(true);
     setCurrentUser(userProfile);
+    // Land on the correct initial screen per role
+    const initialTab = userProfile?.role === 'ADMIN' ? 'all-campaigns' : 'leads';
+    setActiveTab(initialTab);
+    navigate('/');
     fetchBackendLeads();
     fetchBackendCampaigns();
   };
@@ -122,6 +137,8 @@ function App() {
     setCurrentUser(null);
     setSelectedLeadId(null);
     setCampaigns([]);
+    setActiveTab('leads');
+    navigate('/');
   };
 
   const [returnTab, setReturnTab] = useState('leads');
@@ -170,9 +187,7 @@ function App() {
                 <p>Enterprise pipeline & territory management for Cooperative Societies, Banks & Auditors</p>
               </div>
               <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                <button className="btn btn-secondary" onClick={() => {
-                  alert("CRM leads and pipeline portfolio exported successfully.");
-                }}>
+                <button className="btn btn-secondary" onClick={() => exportLeadsToPDF(leads, currentUser)} title="Download CRM Leads Report as PDF">
                   <Download size={15} />
                   <span>Export CRM Data</span>
                 </button>
@@ -246,6 +261,18 @@ function App() {
                   campaigns={campaigns}
                   setCampaigns={setCampaigns}
                   onComposeNew={() => setActiveTab('campaigns')}
+                />
+              )}
+
+              {/* Robust Fallback: Default to LeadsScreen if activeTab is unset or invalid for current role */}
+              {!['leads', 'lead-detail', ...(currentUser?.role === 'ADMIN' ? ['team', 'all-campaigns'] : ['pipeline', 'campaigns', 'past-campaigns'])].includes(activeTab) && (
+                <LeadsScreen 
+                  leads={leads}
+                  setLeads={setLeads}
+                  showAddLead={showAddLead}
+                  setShowAddLead={setShowAddLead}
+                  onViewLead={handleViewLead}
+                  currentUser={currentUser}
                 />
               )}
             </>

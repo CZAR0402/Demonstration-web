@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   ShieldCheck, Send, Upload, FileSpreadsheet, Trash2, CheckCircle, 
   AlertCircle, RefreshCw, Mail, History, ArrowRight, HelpCircle, Download, X,
-  FileCheck, FileText, ExternalLink, Eye, Phone, Globe, MapPin
+  FileCheck, FileText, ExternalLink, Eye, Phone, Globe, MapPin, Paperclip
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { api } from '../services/api';
@@ -33,6 +33,10 @@ The Fivopay Team`,
   const [isSending, setIsSending] = useState(false);
   const [smtpStatus, setSmtpStatus] = useState({ loading: true, connected: false, host: '', port: '', from: '' });
   const [notification, setNotification] = useState(null);
+
+  // Email Attachments State
+  const [attachments, setAttachments] = useState([]);
+  const [attachmentError, setAttachmentError] = useState('');
 
   // Check SMTP Status on mount
   const checkSmtpHealth = async () => {
@@ -197,6 +201,71 @@ The Fivopay Team`,
     }
   };
 
+  // Helper to format file sizes
+  const formatFileSize = (bytes) => {
+    if (!bytes || bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return `${(bytes / Math.pow(k, i)).toFixed(1)} ${sizes[i]}`;
+  };
+
+  // Handle attachment file selection with validation
+  const handleAttachmentSelect = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    setAttachmentError('');
+
+    const currentCount = attachments.length;
+    if (currentCount + files.length > 5) {
+      setAttachmentError('Maximum 5 attachments allowed per campaign.');
+      return;
+    }
+
+    const currentTotalSize = attachments.reduce((acc, f) => acc + f.size, 0);
+    const newFilesSize = files.reduce((acc, f) => acc + f.size, 0);
+    if (currentTotalSize + newFilesSize > 15 * 1024 * 1024) {
+      setAttachmentError('Total attachments size cannot exceed 15 MB limit.');
+      return;
+    }
+
+    const processedFiles = [];
+    for (const file of files) {
+      const lowerName = file.name.toLowerCase();
+      if (lowerName.endsWith('.exe') || lowerName.endsWith('.bat') || lowerName.endsWith('.cmd') || lowerName.endsWith('.js') || lowerName.endsWith('.vbs')) {
+        setAttachmentError(`File type of "${file.name}" is prohibited for email attachments.`);
+        return;
+      }
+
+      try {
+        const base64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = (error) => reject(error);
+          reader.readAsDataURL(file);
+        });
+
+        processedFiles.push({
+          name: file.name,
+          size: file.size,
+          type: file.type || 'application/octet-stream',
+          base64
+        });
+      } catch (err) {
+        setAttachmentError(`Failed to read file ${file.name}: ${err.message}`);
+        return;
+      }
+    }
+
+    setAttachments(prev => [...prev, ...processedFiles]);
+    e.target.value = '';
+  };
+
+  const removeAttachment = (indexToRemove) => {
+    setAttachments(prev => prev.filter((_, idx) => idx !== indexToRemove));
+    setAttachmentError('');
+  };
+
   const handleSendCampaign = async (e) => {
     e.preventDefault();
     if (!newCampaign.name || !newCampaign.subject) return;
@@ -228,7 +297,14 @@ The Fivopay Team`,
         name: newCampaign.name,
         subject: newCampaign.subject,
         templateText: newCampaign.templateText,
-        recipients: recipientsPayload
+        recipients: recipientsPayload,
+        trackingBaseUrl: 'https://sales.fivopayunion.in',
+        attachments: attachments.map(a => ({
+          filename: a.name,
+          size: a.size,
+          contentType: a.type,
+          base64: a.base64
+        }))
       };
 
       const res = await api.sendCampaign(payload);
@@ -245,13 +321,15 @@ The Fivopay Team`,
           bounced: createdCamp.failedCount || 0,
           date: createdCamp.date || new Date().toISOString().split('T')[0],
           subject: createdCamp.subject,
-          recipients: createdCamp.recipients || []
+          recipients: createdCamp.recipients || [],
+          attachments: createdCamp.attachments || []
         };
 
         setCampaigns(prev => [normalizedCamp, ...prev]);
         setFileData([]);
         setFileName('');
         setFileType('');
+        setAttachments([]);
 
         setNotification({
           type: 'success',
@@ -574,15 +652,47 @@ The Fivopay Team`,
             </div>
 
             <div className="form-group">
-              <label className="form-label">Subject Line (Common for all recipients)</label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.45rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                <label className="form-label" style={{ margin: 0 }}>
+                  Subject Line
+                </label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ fontSize: '0.725rem', color: 'var(--text-muted)' }}>Personalize:</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNewCampaign(prev => ({
+                        ...prev,
+                        subject: prev.subject 
+                          ? (prev.subject.includes('{name}') ? prev.subject : `${prev.subject} for {name}`)
+                          : 'Quick update for {name} from Fivopay'
+                      }));
+                    }}
+                    className="btn btn-secondary"
+                    style={{ 
+                      fontSize: '0.725rem', 
+                      padding: '0.2rem 0.55rem', 
+                      borderRadius: '4px',
+                      color: 'var(--accent)',
+                      borderColor: 'var(--accent)'
+                    }}
+                    title="Insert {name} tag into subject line"
+                  >
+                    + {'{name}'}
+                  </button>
+                </div>
+              </div>
               <input 
                 type="text" 
-                placeholder="Enter email subject line sent to all recipients" 
+                placeholder="e.g. Quick question for {name} regarding Fivopay" 
                 className="form-input"
                 value={newCampaign.subject}
                 onChange={(e) => setNewCampaign({ ...newCampaign, subject: e.target.value })}
                 required
               />
+              <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)', marginTop: '0.3rem' }}>
+                💡 Tip: Including <code>{'{name}'}</code> gives each recipient a unique subject line, helping bypass Gmail's bulk Promotions tab filter.
+              </div>
             </div>
 
             {/* Target Recipients if File not provided */}
@@ -632,6 +742,26 @@ The Fivopay Team`,
                     title="Click to ensure Dear {name}, is inserted"
                   >
                     + Dear {'{name}'},
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNewCampaign(prev => ({
+                        ...prev,
+                        templateText: prev.templateText + (prev.templateText.endsWith('\n\n') ? '' : '\n\n') + 'https://www.fivopay.com/contact\n\n'
+                      }));
+                    }}
+                    className="btn btn-secondary"
+                    style={{ 
+                      fontSize: '0.725rem', 
+                      padding: '0.2rem 0.55rem', 
+                      borderRadius: '4px',
+                      color: '#0284c7',
+                      borderColor: '#0284c7'
+                    }}
+                    title="Insert Contact Us CTA button"
+                  >
+                    + Contact Us Button
                   </button>
                 </div>
               </div>
@@ -738,98 +868,273 @@ The Fivopay Team`,
                         fontSize: '0.925rem', 
                         lineHeight: '1.7', 
                         color: '#334155', 
-                        whiteSpace: 'pre-wrap',
                         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
                       }}>
-                        {newCampaign.templateText
-                          ? newCampaign.templateText.replace(/\{\{\s*name\s*\}\}/gi, fileData.length > 0 && fileData[0].name ? fileData[0].name : 'Harsh Raj')
-                                                    .replace(/\{\s*name\s*\}/gi, fileData.length > 0 && fileData[0].name ? fileData[0].name : 'Harsh Raj')
-                          : 'Dear Harsh Raj,\n\n(Your email message body will appear here...)'}
+                        {(() => {
+                          const previewText = newCampaign.templateText
+                            ? newCampaign.templateText.replace(/\{\{\s*name\s*\}\}/gi, fileData.length > 0 && fileData[0].name ? fileData[0].name : 'Harsh Raj')
+                                                      .replace(/\{\s*name\s*\}/gi, fileData.length > 0 && fileData[0].name ? fileData[0].name : 'Harsh Raj')
+                            : 'Dear Harsh Raj,\n\n(Your email message body will appear here...)';
+
+                          const parts = previewText.split(/(?:https?:\/\/)?(?:www\.)?fivopay\.com(?:\/contact)?|\[\s*Contact\s*Us\s*\]/gi);
+                          if (parts.length > 1) {
+                            return (
+                              <>
+                                <span style={{ whiteSpace: 'pre-wrap' }}>{parts[0]}</span>
+                                <div style={{ margin: '14px 0 16px 0' }}>
+                                  <a 
+                                    href="https://www.fivopay.com/contact" 
+                                    target="_blank" 
+                                    rel="noreferrer"
+                                    style={{
+                                      display: 'inline-block',
+                                      padding: '10px 24px',
+                                      background: 'linear-gradient(135deg, #0284c7 0%, #4f46e5 100%)',
+                                      color: '#ffffff',
+                                      fontWeight: '700',
+                                      fontSize: '13px',
+                                      borderRadius: '8px',
+                                      textDecoration: 'none',
+                                      boxShadow: '0 3px 8px rgba(79, 70, 229, 0.25)'
+                                    }}
+                                  >
+                                    Contact Us &rarr;
+                                  </a>
+                                </div>
+                                <span style={{ whiteSpace: 'pre-wrap' }}>{parts.slice(1).join('')}</span>
+                              </>
+                            );
+                          }
+                          return <span style={{ whiteSpace: 'pre-wrap' }}>{previewText}</span>;
+                        })()}
                       </div>
 
-                      {/* Fivopay Branded Footer Strip (Matching Exact User Reference Image) */}
-                      <div style={{ marginTop: '2rem' }}>
-                        {/* Outer Purple Banner */}
+                      {/* Official Fivopay Branded Ribbon Footer (Matching exact email output) */}
+                      <div style={{ marginTop: '2rem', width: '100%' }}>
                         <div style={{
-                          backgroundColor: '#482d82',
-                          borderRadius: '8px',
+                          background: 'linear-gradient(90deg, #edf5ff 0%, #ffffff 32%, #faf7ff 70%, #f1ebff 100%)',
+                          border: '1px solid #dce7f6',
+                          borderRadius: '12px',
                           padding: '10px 14px',
-                          boxShadow: '0 2px 6px rgba(72, 45, 130, 0.25)'
+                          boxShadow: '0 2px 8px rgba(37, 99, 235, 0.05)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '0.65rem',
+                          flexWrap: 'wrap'
                         }}>
-                          {/* Inner Cyan-Blue Pill */}
-                          <div style={{
-                            backgroundColor: '#1b68b3',
-                            borderRadius: '50px',
-                            padding: '8px 16px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            gap: '0.75rem',
-                            flexWrap: 'nowrap'
-                          }}>
-                            {/* 1. Phone */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexShrink: 0 }}>
-                              <div style={{
-                                width: '26px',
-                                height: '26px',
-                                borderRadius: '50%',
-                                backgroundColor: '#ffffff',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                flexShrink: 0
-                              }}>
-                                <Phone size={13} color="#1b68b3" fill="#1b68b3" />
+                          {/* 1. FIVOPAY Brand */}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+                            <img 
+                              src="/fivopay-icon.png" 
+                              alt="Fivopay" 
+                              style={{ width: '38px', height: '38px', objectFit: 'contain', display: 'block' }} 
+                            />
+                            <div>
+                              <div style={{ fontSize: '18px', fontWeight: '800', lineHeight: '1', letterSpacing: '-0.2px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+                                <span style={{ color: '#0284c7' }}>FIVO</span><span style={{ color: '#6366f1' }}>PAY</span><span style={{ fontSize: '9px', verticalAlign: 'top', color: '#6366f1', fontWeight: '700', marginLeft: '2px' }}>&trade;</span>
                               </div>
-                              <span style={{ color: '#ffffff', fontSize: '0.8rem', fontWeight: '600', whiteSpace: 'nowrap' }}>
+                              <div style={{ color: '#3730a3', fontSize: '10px', fontWeight: '600', lineHeight: '1.2', marginTop: '3px', whiteSpace: 'nowrap' }}>
+                                Making Banking Easier
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Divider */}
+                          <div style={{ width: '1px', height: '36px', backgroundColor: '#cbd5e1' }} />
+
+                          {/* 2. Contact Us */}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '7px', flexShrink: 0 }}>
+                            <img 
+                              src="/email-phone.png" 
+                              alt="Phone" 
+                              style={{ width: '30px', height: '30px', borderRadius: '50%', objectFit: 'contain', display: 'block' }} 
+                            />
+                            <div>
+                              <div style={{ color: '#64748b', fontSize: '11px', fontWeight: '600', lineHeight: '1.2' }}>Contact Us</div>
+                              <div style={{ marginTop: '2px', color: '#0f172a', fontSize: '12px', fontWeight: '700', whiteSpace: 'nowrap' }}>
                                 +91-9096081885
-                              </span>
-                            </div>
-
-                            {/* 2. Logo in Between + Website */}
-                            <div style={{
-                              backgroundColor: '#ffffff',
-                              borderRadius: '20px',
-                              padding: '3px 12px',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '6px',
-                              boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
-                              flexShrink: 0
-                            }}>
-                              <img 
-                                src="/fivopay-logo.png" 
-                                alt="Fivopay" 
-                                style={{ height: '18px', width: 'auto', objectFit: 'contain' }} 
-                              />
-                              <span style={{ color: '#1b68b3', fontSize: '0.8rem', fontWeight: '700', whiteSpace: 'nowrap' }}>
-                                www.fivopay.com
-                              </span>
-                            </div>
-
-                            {/* 3. Office Address */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexShrink: 0, textAlign: 'left' }}>
-                              <div style={{
-                                width: '26px',
-                                height: '26px',
-                                borderRadius: '50%',
-                                backgroundColor: '#ffffff',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                flexShrink: 0
-                              }}>
-                                <MapPin size={13} color="#1b68b3" fill="#1b68b3" />
                               </div>
-                              <div style={{ color: '#ffffff', fontSize: '0.725rem', fontWeight: '500', lineHeight: '1.25', whiteSpace: 'nowrap' }}>
+                            </div>
+                          </div>
+
+                          {/* Divider */}
+                          <div style={{ width: '1px', height: '36px', backgroundColor: '#cbd5e1' }} />
+
+                          {/* 3. Visit Our Website */}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '7px', flexShrink: 0 }}>
+                            <img 
+                              src="/email-globe.png" 
+                              alt="Website" 
+                              style={{ width: '30px', height: '30px', borderRadius: '50%', objectFit: 'contain', display: 'block' }} 
+                            />
+                            <div>
+                              <div style={{ color: '#64748b', fontSize: '11px', fontWeight: '600', lineHeight: '1.2' }}>Visit Our Website</div>
+                              <div style={{ marginTop: '2px', color: '#0f172a', fontSize: '12px', fontWeight: '700', whiteSpace: 'nowrap' }}>
+                                www.fivopay.com
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Divider */}
+                          <div style={{ width: '1px', height: '36px', backgroundColor: '#cbd5e1' }} />
+
+                          {/* 4. Office Address */}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '7px', flexShrink: 0 }}>
+                            <img 
+                              src="/email-pin.png" 
+                              alt="Location" 
+                              style={{ width: '30px', height: '30px', borderRadius: '50%', objectFit: 'contain', display: 'block' }} 
+                            />
+                            <div>
+                              <div style={{ color: '#64748b', fontSize: '11px', fontWeight: '600', lineHeight: '1.2' }}>Office Address</div>
+                              <div style={{ marginTop: '2px', color: '#0f172a', fontSize: '11px', fontWeight: '600', lineHeight: '1.3' }}>
                                 Office No-123, 10 Biz Park,<br />Vimanagar, Pune-14
                               </div>
                             </div>
                           </div>
+
+                          {/* 5. 3D Banking & Security Illustration */}
+                          <div style={{ flexShrink: 0, marginLeft: 'auto' }}>
+                            <img 
+                              src="/footer-illustration.png" 
+                              alt="Fivopay Secure Banking" 
+                              style={{ height: '52px', width: 'auto', maxWidth: '120px', display: 'block', borderRadius: '6px' }} 
+                            />
+                          </div>
                         </div>
+                      </div>
+
+                        {/* Attachments Preview in Simulated Email Viewer */}
+                        {attachments.length > 0 && (
+                          <div style={{
+                            marginTop: '1.25rem',
+                            padding: '0.65rem 0.85rem',
+                            backgroundColor: '#f8fafc',
+                            borderRadius: '8px',
+                            border: '1px solid #e2e8f0'
+                          }}>
+                            <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#475569', marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                              <Paperclip size={13} style={{ color: 'var(--accent)' }} />
+                              <span>{attachments.length} Attachment{attachments.length > 1 ? 's' : ''} ({formatFileSize(attachments.reduce((acc, f) => acc + f.size, 0))})</span>
+                            </div>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                              {attachments.map((f, i) => (
+                                <span key={i} style={{ fontSize: '0.72rem', backgroundColor: '#ffffff', border: '1px solid #cbd5e1', padding: '0.2rem 0.5rem', borderRadius: '4px', color: '#1e293b' }}>
+                                  📄 {f.name} ({formatFileSize(f.size)})
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
+                )}
+            </div>
+
+            {/* Email Attachments Component (Optional) */}
+            <div className="form-group" style={{ 
+              backgroundColor: 'rgba(255, 255, 255, 0.02)',
+              border: '1px dashed var(--border)',
+              borderRadius: '10px',
+              padding: '1rem',
+              marginTop: '0.25rem'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: attachments.length > 0 ? '0.75rem' : '0.45rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Paperclip size={16} style={{ color: 'var(--accent)' }} />
+                  <label className="form-label" style={{ margin: 0, fontSize: '0.85rem', fontWeight: '700' }}>
+                    Email Attachments (Optional)
+                  </label>
+                </div>
+                <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)' }}>
+                  {attachments.length}/5 files • Total: {formatFileSize(attachments.reduce((acc, f) => acc + f.size, 0))} / 15 MB
+                </div>
+              </div>
+
+              {attachmentError && (
+                <div style={{ padding: '0.5rem 0.75rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '6px', color: '#ef4444', fontSize: '0.775rem', marginBottom: '0.75rem' }}>
+                  <AlertCircle size={14} style={{ display: 'inline', marginRight: '0.4rem', verticalAlign: 'middle' }} />
+                  {attachmentError}
+                </div>
+              )}
+
+              {/* Upload Input & Button */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexWrap: 'wrap' }}>
+                <label 
+                  className="btn btn-secondary" 
+                  style={{ 
+                    cursor: 'pointer', 
+                    fontSize: '0.8rem', 
+                    padding: '0.45rem 0.85rem', 
+                    display: 'inline-flex', 
+                    alignItems: 'center', 
+                    gap: '0.45rem',
+                    margin: 0
+                  }}
+                >
+                  <Paperclip size={14} />
+                  <span>Choose Attachments (PDF, Word, Excel, Images)</span>
+                  <input 
+                    type="file" 
+                    multiple 
+                    onChange={handleAttachmentSelect}
+                    style={{ display: 'none' }}
+                    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.png,.jpg,.jpeg,.txt"
+                  />
+                </label>
+                <span style={{ fontSize: '0.725rem', color: 'var(--text-muted)' }}>
+                  Files will be attached to each email and delivered directly to the recipient's inbox.
+                </span>
+              </div>
+
+              {/* Selected Attachments Chips */}
+              {attachments.length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.85rem' }}>
+                  {attachments.map((file, idx) => (
+                    <div 
+                      key={idx}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.45rem',
+                        padding: '0.4rem 0.7rem',
+                        borderRadius: '6px',
+                        backgroundColor: 'var(--bg-card)',
+                        border: '1px solid var(--border)',
+                        fontSize: '0.8rem',
+                        color: 'var(--text-primary)',
+                        maxWidth: '300px'
+                      }}
+                    >
+                      <FileText size={14} style={{ color: 'var(--accent)', flexShrink: 0 }} />
+                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: '500' }} title={file.name}>
+                        {file.name}
+                      </span>
+                      <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', flexShrink: 0 }}>
+                        ({formatFileSize(file.size)})
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => removeAttachment(idx)}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          color: 'var(--text-muted)',
+                          padding: '2px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          flexShrink: 0,
+                          marginLeft: '0.2rem'
+                        }}
+                        title={`Remove ${file.name}`}
+                      >
+                        <X size={13} />
+                      </button>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>

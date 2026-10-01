@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Mail, Lock, UserCheck, Shield } from 'lucide-react';
+import { ShieldCheck, Mail, Lock, UserCheck, Shield, Eye, EyeOff } from 'lucide-react';
 import { api } from '../services/api';
 
 function LoginScreen({ onLoginSuccess }) {
-  const [email, setEmail] = useState('bde@fivopay.com');
-  const [password, setPassword] = useState('bde@123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -93,7 +94,8 @@ function LoginScreen({ onLoginSuccess }) {
             <div style={{ position: 'relative' }}>
               <Mail size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input 
-                type="email" 
+                type="email"
+                placeholder='Enter your email address'
                 className="form-input" 
                 style={{ paddingLeft: '2.5rem' }}
                 value={email}
@@ -108,13 +110,35 @@ function LoginScreen({ onLoginSuccess }) {
             <div style={{ position: 'relative' }}>
               <Lock size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input 
-                type="password" 
+                type={showPassword ? 'text' : 'password'} 
+                placeholder='Enter your password'
                 className="form-input" 
-                style={{ paddingLeft: '2.5rem' }}
+                style={{ paddingLeft: '2.5rem', paddingRight: '2.5rem' }}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'var(--text-muted)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '4px'
+                }}
+                title={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
             </div>
           </div>
 
@@ -124,7 +148,7 @@ function LoginScreen({ onLoginSuccess }) {
         </form>
 
         {/* Demo Role Quick Switch Buttons */}
-        <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border)' }}>
+        {/* <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border)' }}>
           <span style={{ fontSize: '0.725rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.04em', display: 'block', marginBottom: '0.65rem', textAlign: 'center' }}>
             Quick 1-Click Role Login Demo
           </span>
@@ -132,21 +156,13 @@ function LoginScreen({ onLoginSuccess }) {
             <button 
               type="button" 
               className="btn btn-secondary" 
-              onClick={() => fillQuickLogin('bde@fivopay.com', 'bde@123')}
-              style={{ fontSize: '0.785rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', background: 'rgba(16, 185, 129, 0.08)', color: '#10b981', borderColor: 'rgba(16, 185, 129, 0.2)' }}
-            >
-              <UserCheck size={14} /> Sign in as Sales Guy (bde@fivopay.com)
-            </button>
-            <button 
-              type="button" 
-              className="btn btn-secondary" 
-              onClick={() => fillQuickLogin('admin@fivopay.com', 'password123')}
+              onClick={() => fillQuickLogin('manager@fivopay.com', 'password123')}
               style={{ fontSize: '0.785rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', background: 'rgba(99, 102, 241, 0.08)', color: '#6366f1', borderColor: 'rgba(99, 102, 241, 0.2)' }}
             >
-              <Shield size={14} /> Sign in as Admin Manager
+              <Shield size={14} /> Sign in as Admin Manager (manager@fivopay.com)
             </button>
           </div>
-        </div>
+        </div> */}
 
         <div style={{ textAlign: 'center', marginTop: '1.25rem', fontSize: '0.725rem', color: 'var(--text-muted)' }}>
           Fivopay Enterprise Sales CRM • Making Banking Easier
